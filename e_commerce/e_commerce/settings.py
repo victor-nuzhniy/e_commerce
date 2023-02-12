@@ -114,6 +114,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LOGIN_REDIRECT_URL = '/admin'
 
+AUTHENTICATION_BACKENDS = ('shop.utils.EmailBackend',)
+
 LANGUAGE_CODE = 'uk'
 
 TIME_ZONE = 'Europe/Kiev'
@@ -145,3 +147,10 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'shop_cache'),
+    }
+}
