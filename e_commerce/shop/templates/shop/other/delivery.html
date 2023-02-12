@@ -1,0 +1,24 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+    <div id="right-bar-small" class="right-bar">
+    {% include 'shop/samples/right_bar_small.html' %}
+    </div>
+    <div class="main-info">
+        <h1>{% translate "Доставка" %}</h1>
+        <h3>{% translate "Маленькие мечты и грандиозные планы" %}</h3>
+        <p>{% translate "Информацию о сроках и способах доставки, условия получения и хранения, можно найти здесь" %}</p>
+        <img class="banner" src="{% static 'shop/images/banner_3.jpg' %}">
+        <ul>
+            <li>{% translate "Актуальная ситуация касательно оброботки заявок." %}</li>
+            <li>{% translate "Доставка и возврат товаров из Европы EU" %}</li>
+            <li>{% translate "Электронная очередь в магазине или точке выдачи" %}</li>
+            <li>{% translate "Как получить заказ в почтомате?" %}</li>
+            <li>{% translate "Как получить заказ в АЗК WOG?" %}</li>
+            <li>{% translate "Как действует доставка в точки выдачи MOBY?" %}</li>
+        </ul>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load shop_tags %}
+{% load i18n %}
+
+{% block content %}
+    <div class="product-main">
+        <div class="product">
+            <div class="navigation">
+                <a href="{% url 'shop:home' %}">
+                    <img class="menu-btn" src="{% static 'shop/images/main_icon.png' %}" style="width:20px; height:20px">
+                </a>
+                <div>></div>
+                <a href="{% url 'shop:super_category' super_category.id %}">{{ super_category.name }}</a>
+                <div>></div>
+                <a href="{% url 'shop:category' product.category.slug %}">{{ product.category }}</a>
+            </div>
+            <h2 style="width:98%;">{{ product.name | hide_brackets }}</h2>
+            <div class="product-review">
+                {% if product_eval %}
+                    <div class="star-ratings-css" title="{{ product_eval }}"></div>
+                {% else %}
+                    <div>{% translate "Товар ждет вашей оценки" %}</div>
+                {% endif %}
+                <div>{% translate "код: " %} {{ product.vendor_code }}</div>
+            </div>
+        </div>
+        <div class="product-menu">
+            <div id="about-product" style="cursor:pointer">{% translate "Все о товаре" %}</div>
+            <div id="product-characteristic" style="cursor:pointer">{% translate "Характеристики" %}</div>
+            <div id="product-rev" style="cursor:pointer">{% translate "Отзывы" %}</div>
+            <div id="product-image" style="cursor:pointer">{% translate "Фото" %}</div>
+        </div>
+        <div class="product-info">
+            <div class="product-information">
+            {% if product_images %}
+                <img class="product-main-photo" src="{{ product_images.0.url }}">
+            {% endif %}
+            <div class="product-info-description">
+                <div style="display:flex; flex-direction:row; align-items:center; justify-content:space-between">
+                {% if product.sold %}
+                    <div class="availability" style="color: rgb(200,200,200)">{% translate "Товар отсутствует" %}</div>
+                {% else %}
+                    <div class="availability">{% translate "Есть в наличии" %}</div>
+                {% endif %}
+                    <div id="product-in-cart">
+                        <p>{% translate "Товар добавлен в корзину" %}</p>
+                    </div>
+                </div>
+
+                <div class="price">
+                    <div class="title">{{ product.price }} {% translate "грн" %}</div>
+                    <button data-product="{{ product.id }}" data-action="add" data-sold="{{ product.sold }}" class="product-basket-button">
+                        <img src="{% static 'shop/images/white_basket.png' %}" width="30" height="30">
+                        {% translate "Купить" %}
+                    </button>
+                </div>
+                <div class="price">
+                    <div>{% translate "Продавец:" %} MOBY</div>
+                    <div>
+                        <img src="{% static 'shop/images/main_icon.png' %}" width="25" height="25">
+                    </div>
+                </div>
+                <div class="price">
+                    <p style="margin: 10px">{{ product.description }}
+                </div>
+                <div class="price">
+                    <p style="margin: 10px">{% translate "Оплата. Оплата при получении товара, Google Pay, Картой онлайн, Безналичными для юридических лиц, Оплатить онлайн социальной картой «Пакунок малюка», Безналичными для физических лиц, Оплатить онлайн картой «єПідтримка», PrivatPay, Apple Pay, ,, ." %}
+                </div>
+            </div>
+            </div>
+            <div class="product-info">
+                <div class="product-features">
+                <div class="product-info-features">
+                    {% for category_feature in category_features %}
+                        {% if category_feature %}
+                        <div class="product-info-features-elem">{{ category_feature }}</div>
+                        <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="product-info-features">
+                    {% for product_feature in product_features %}
+                        {% if product_feature %}
+                        <div class="product-info-features-elem">{{ product_feature }}</div>
+                        <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                </div>
+                <div id="product-reviews" class="product-info-review">
+                    <div class="price" style="width:100%; max-width:600px">
+                        <h3>{% translate "Оставьте свой отзыв об этом товаре" %}</h3>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <form class="review" action="{% url 'shop:product_form' product.slug %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-errors">{{ review_form.non_field_errors }}</div>
+                        <!-- rating-->
+                        <div class="rating">
+                            <input type="radio" name="grade" id="one" value="1" checked />
+                            <label for="one"><i class="fa fa-star"></i></label>
+                            <input type="radio" name="grade" id="two" value="2" />
+                            <label for="two"><i class="fa fa-star"></i></label>
+                            <input type="radio" name="grade" id="three" value="3" />
+                            <label for="three"><i class="fa fa-star"></i></label>
+                            <input type="radio" name="grade" id="four" value="4" />
+                            <label for="four"><i class="fa fa-star"></i></label>
+                            <input type="radio" name="grade" id="five" value="5" />
+                            <label for="five"><i class="fa fa-star"></i></label>
+                        </div>
+                        <!-- rating -->
+                        <div style="margin:5px">{{ review_form.review_text }}</div>
+                        <input type="hidden" name="review_author" value="{{ user.id }}">
+                        <input type="hidden" name="product" value="{{ product.id }}">
+                        <div class="form-errors">{{ review_form.review_text.errors }}</div>
+                        <input class="product-basket-button" style="margin:3px; font-size:18px" type="submit" value={% translate "Сохранить" %}>
+                    </form>
+                    {% else %}
+                        <div class="price" style="width:100%; max-width:600px">
+                            <h3>{% translate "Авторизуйтесь, чтобы оставить отзыв о товаре" %}</h3>
+                        </div>
+                    {% endif %}
+                    {% for review in product_review %}
+                        <div class="review">
+                            <div class="review-head">
+                                {{ review.review_author }}
+                                {{ review.review_date }}
+                                <div style="display:flex; flex-direction:row; align-items:center">
+                                <div class="review-head">
+                                    <div type="submit" class="like-button" data-review="{{ review.id }}" data-author="{{ user.id }}" data-like="{{ True }}">
+                                        <img src="{% static 'shop/images/like_#0000cc.png' %}">
+                                        {% if review.like_num %}
+                                            {{ review.like_num }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="review-head">
+                                    <div type="submit" class="like-button" data-review="{{ review.id }}" data-author="{{ user.id }}" data-like="{{ False }}">
+                                        <img src="{% static 'shop/images/dislike_#0000cc.png' %}">
+                                        {% if review.dislike_num %}
+                                            {{ review.dislike_num }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                </div>
+
+                            </div>
+<!--                            <hr style="height:1px; background-color:rgb(240,240,240); border:none">-->
+                            <div class="review-head">
+                                <div class="rating" style="color:gold">
+                                    {% for _ in review.grade|get_range %}
+                                        <i class="fa fa-star"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="review-head">
+                                {{ review.review_text }}
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                </div>
+
+
+            </div>
+            <div id="prod-photo" class="p-photo">
+                {% for image in product_images %}
+                    {% if image %}
+                        <div style="width: 200px; height: 200px; margin: 10px"><img class="product-photo"src="{{ image.url }}"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript" src="{% static 'shop/js/like.js' %}"></script>
+{% endblock %}

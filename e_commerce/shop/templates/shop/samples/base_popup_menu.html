@@ -1,0 +1,69 @@
+{% load static %}
+{% load i18n %}
+
+<!-- menu with downfall -->
+<div class="menu-down">
+    <img onclick="menuBtnFunction()" class="menu-btn" src="{% static 'shop/images/menu_icon.png' %}">
+    <div id="menuDown" class="menu-down-content">
+        <div class="menu-down-content-items">
+            <div class="header">
+                <a href="{% url 'shop:home' %}" class="main-icon">
+                    <img class="menu-btn" src="{% static 'shop/images/main_icon.png' %}">
+                    <div>BE SMART!</div>
+                </a>
+                <img id="close-menu-icon" class="menu-btn" src="{% static 'shop/images/white_close_icon.png' %}" width="15" height="15">
+            </div>
+            {% if not user.is_authenticated %}
+            <div class="header" style="height:100px">
+                <img class="menu-btn" src="{% static 'shop/images/members.webp' %}" width="36" height="36">
+                <div style="width:70%; color:white;">
+                    <div style="display:flex; flex-direction:row;">
+                        <div id="sign-in-down-menu" class="menu-btn-down">{% translate "Вход" %}</div>
+                        <div style="margin:7px">|</div>
+                        <div id="register-down-menu" class="menu-btn-down">{% translate "Регистрация" %}</div>
+                    </div>
+                    <div style="width:150px">{% translate "Авторизуйтесь для получения расширенных возможностей" %}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% include 'shop/samples/catalog-menu-popup.html' %}
+            <a class="main-icon-grey" href="{% url 'shop:cart' %}">
+                <img src="{% static 'shop/images/grey_basket.png' %}" class="menu-btn" style="margin:10px">
+                {% translate "Корзина" %}
+            </a>
+            <a class="main-icon-grey" href="{% url 'shop:contacts' %}">
+                <img src="{% static 'shop/images/grey_question.png' %}" class="menu-btn" style="margin:10px">
+                {% translate "Справочный центр" %}
+            </a>
+            <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:94%">
+            <div class="main-icon-grey">
+                <div style="margin:10px">{% translate "Язык" %}</div>
+                <div class="menu-lang">
+                    {% include 'shop/samples/lang_selection.html' %}
+                </div>
+            </div>
+            <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:94%">
+            <div class="main-icon-grey" style="margin:10px">{% translate "Информация о комании" %}</div>
+            <a href="{% url 'shop:about' %}" class="main-icon-grey" style="margin:10px">{% translate "О нас" %}</a>
+            <a href="{% url 'shop:terms' %}" class="main-icon-grey" style="margin:10px">{% translate "Условия использования сайта" %}</a>
+            <a href="{% url 'shop:contacts' %}" class="main-icon-grey" style="margin:10px">{% translate "Контакты" %}</a>
+            <a href="{% url 'shop:help' %}" class="main-icon-grey" style="margin:10px">{% translate "Помощь" %}</a>
+            <a href="{% url 'shop:delivery' %}" class="main-icon-grey" style="margin:10px">{% translate "Доставка и оплата" %}</a>
+            <a href="{% url 'shop:credit' %}" class="main-icon-grey" style="margin:10px">{% translate "Кредит" %}</a>
+            <a href="{% url 'shop:return_products' %}" class="main-icon-grey" style="margin:10px">{% translate "Возврат товара" %}</a>
+            <a href="{% url 'shop:service_centers' %}" class="main-icon-grey" style="margin:10px">{% translate "Сервисные центры" %}</a>
+            <a href="{% url 'shop:for_partners' %}" class="main-icon-grey" style="margin:10px">{% translate "Партнерам" %}</a>
+            <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:94%">
+            <div class="main-icon-grey" style="margin:10px">{% translate "Мы в социальных сетях" %}</div>
+            <div class="main-icon" style="width:100%; justify-content:space-around">
+                <a href="https://uk-ua.facebook.com/" ><img src="{% static 'shop/images/Facebook.svg' %}" height="30" width="30"></a>
+                <a href="https://www.instagram.com/" ><img src="{% static 'shop/images/Instagram.svg' %}" height="30" width="30"></a>
+                <a href="https://web.telegram.org/" ><img src="{% static 'shop/images/Telegram.svg' %}" height="30" width="30"></a>
+                <a href="https://www.twitter.com/" ><img src="{% static 'shop/images/Twitter.svg' %}" height="30" width="30"></a>
+                <a href="https://www.youtube.com/" ><img src="{% static 'shop/images/Youtube.svg' %}" height="30" width="30"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of menu with downfall -->

@@ -1,0 +1,24 @@
+{% load static %}
+{% load i18n %}
+
+
+<form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}">
+    <button type="submit" name="language" value="uk" class="menu-btn" style="background-color:#3E3D53; margin-right:5px; max-width:40px;">
+        UA
+    </button>
+</form>
+
+<form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}">
+    <button type="submit" name="language" value="ru" class="menu-btn" style="background-color:#3E3D53; margin-right:5px; max-width:40px;">
+        RU
+    </button>
+</form>
+
+<form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}">
+    <button type="submit" name="language" value="en" class="menu-btn" style="background-color:#3E3D53; margin-right:5px; max-width:40px;">
+        EN
+    </button>
+</form>

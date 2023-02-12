@@ -1,0 +1,58 @@
+{% load static %}
+{% load shop_tags %}
+{% load i18n %}
+
+<div class="cart">
+        {% if message %}
+            <div class="cart-head">
+                {% if warning %}
+                    <p id="cart-warning">{{ warning }}</p>
+                {% endif %}
+                <p id="cart-message">{{ message }}</p>
+                <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
+            </div>
+        {% endif %}
+        <div class="cart-head">
+            <div style="width:90%">
+            <a href="{% url 'shop:home' %}">{% translate "Продолжить покупки" %}</a>
+            </div>
+            <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
+            <div class="cart-head-info">
+                <div>{% translate "Количество: " %}{{ order.get_order_items }} {% translate "шт" %}</div>
+                <div>{% translate "Всего: " %}{{ order.get_order_total }} {% translate "грн" %}</div>
+                {% if flag %}
+                    <a href="{% url 'shop:checkout' %}">{% translate "Подтвердить заказ" %}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="cart-head">
+            <div class="cart-info-legend">
+                <div class="cart-info-legend-int">{% translate "Изображение" %}</div>
+                <p class="cart-info-legend-product">{% translate "Товар" %}</p>
+                <div class="cart-info-legend-int">{% translate "Цена" %}</div>
+                <div class="cart-info-legend-int">{% translate "Количество" %}</div>
+                <div class="cart-info-legend-int">{% translate "Итого" %}</div>
+            </div>
+            <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
+
+            {% for item in items %}
+                <div class="cart-info-legend">
+                    <div class="cart-info-legend-int"><img src="{{ item.product.productimage.image_1.url }}" style="width:auto; height:40px"></div>
+                    <p class="cart-info-legend-product">{{ item.product.name | hide_brackets }}</p>
+                    <div class="cart-info-legend-int">{{ item.product.price }} {% translate "грн" %}</div>
+                    <div class="cart-info-legend-int">
+                        <div style="margin-top:5px">{{ item.quantity }}</div>
+                        {% if flag %}
+                        <div style="display:flex; flex-direction:column; justify-content:center; cursor:pointer">
+                            <img class="cart-quantity" src="{% static 'shop/images/triangle-up.png' %}" data-product="{{ item.product.id }}" data-action="add">
+                            <img class="cart-quantity" src="{% static 'shop/images/triangle_down.png' %}" data-product="{{ item.product.id }}" data-action="remove">
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="cart-info-legend-int">{{ item.get_total }} {% translate "грн" %}</div>
+                </div>
+                <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
+            {% endfor %}
+        </div>
+        {{ cartJson|json_script:"cartJson" }}
+    </div>

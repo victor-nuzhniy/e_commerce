@@ -1,0 +1,63 @@
+{% extends 'shop/base.html' %}
+{% load shop_tags %}
+{% load i18n %}
+
+{% block content %}
+<div class="account-main">
+<form method="post" class="user-account-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div style="display:flex; flex-direction:row; justify-content:space-around">
+        <input type="submit" value={% translate "Подтвердить" %} class="filter-button" style="background-color:white">
+        <a href="{% url 'shop:password_change' %}" class="filter-button">{% translate "Сменить пароль" %}</a>
+    </div>
+</form>
+    <p style="margin:10px">{% translate "Архив покупок" %}</p>
+    <p style="margin:10px">{% translate "(все стоимости приведены в гривне)" %}</p>
+<div style="display:flex; flex-direction:column">
+    <div class="account-order-label">
+        <div class="account-order-and-sale">
+            <div>{% translate "Дата заказа" %}</div>
+            <div>{% translate "Дата продажи" %}</div>
+        </div>
+        <div>
+            <div class="account-orderitem">
+                <div class="account-orderitem-product-name">{% translate "Наименование продукта" %}</div>
+                <div class="account-orderitem-product-info">
+                    <div style="width:20px">{% translate "шт" %}</div>
+                    <div style="width:100px">{% translate "Цена" %}</div>
+                    <div style="width:100px">{% translate "Всего" %}</div>
+                </div>
+            </div>
+        </div>
+        <div style="20px">{% translate "шт" %}</div>
+        <div class="account-order-label-total">{% translate "Итого" %}</div>
+    </div>
+    {% for order in order_list %}
+    {% if order.0.get_order_total %}
+    <div class="account-order">
+        <div class="account-order-and-sale">
+            <div>{{ order.0.date_ordered }}</div>
+            <div>{{ order.1 }}</div>
+        </div>
+        <div style="display:flex; flex-direction:column">
+            {% for orderitem in order.2 %}
+                <div class="account-orderitem">
+                    <div class="account-orderitem-product-name">{{ orderitem.product.name | hide_brackets }}</div>
+                    <div class="account-orderitem-product-info">
+                        <div style="width:20px">{{ orderitem.quantity }}</div>
+                        <div style="width:100px">{{ orderitem.product.price }}</div>
+                        <div style="width:100px">{{ orderitem.get_total }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div style="width:20px">{{ order.0.get_order_items }}</div>
+        <div class="account-order-label-total">{{ order.0.get_order_total }}</div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+</div>
+</div>
+{% endblock %}

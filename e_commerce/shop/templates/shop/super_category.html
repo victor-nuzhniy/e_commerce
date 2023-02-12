@@ -1,0 +1,35 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'shop/samples/right_bar.html' %}
+    <div class="main-info-wrapper">
+        {% if title %}
+        <div class="navigation">
+                <a href="{% url 'shop:home' %}">
+                    <img class="menu-btn" src="{% static 'shop/images/main_icon.png' %}" style="width:20px; height:20px; margin-right:10px;">
+                </a>
+                <div>></div>
+                <div>{{ title.name }}</div>
+            </div>
+        {% endif %}
+
+    <div class="main-info">
+        <div class="title">{{ title }}</div>
+        <img class="banner" src="{% static 'shop/images/banner_note.jpg' %}">
+        <div class="main-info-content">
+            {% for category in categories %}
+                <a href="{{ category.get_absolute_url }}">
+                    <div>{{ category.name }}</div>
+                    {% if category.picture %}
+                        <img src="{{ category.picture.url }}" style="width:auto; height:auto; max-width:90%; max-height:80%">
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+        {% include 'shop/samples/paginator.html' %}
+
+    </div>
+    </div>
+
+{% endblock %}

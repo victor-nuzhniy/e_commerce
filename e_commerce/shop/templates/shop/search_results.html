@@ -1,0 +1,11 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="main-info">
+    <h1>{% translate "Результаты поиска по запросу " %}"{{ query }}"</h1>
+
+{% include 'shop/samples/product_list.html' %}
+</div>
+{% endblock %}

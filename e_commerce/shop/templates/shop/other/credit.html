@@ -1,0 +1,20 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+    <div id="right-bar-small" class="right-bar">
+    {% include 'shop/samples/right_bar_small.html' %}
+    </div>
+    <div class="main-info">
+        <h1>{% translate "Банки партнеры" %}</h1>
+        <img src="{% static 'shop/images/privatbank.png' %}" style="margin:20px" width="200" height="120">
+        <img src="{% static 'shop/images/a_bank.png' %}" style="margin:20px" width="200" height="120">
+        <img src="{% static 'shop/images/alpha_bank.png' %}" style="margin:20px" width="200" height="120">
+        <img src="{% static 'shop/images/monobank.png' %}" style="margin:20px" width="200" height="120">
+        <img src="{% static 'shop/images/otp_bank.png' %}" style="margin:20px" width="200" height="120">
+        <img src="{% static 'shop/images/pumb_bank.png' %}" style="margin:20px" width="200" height="120">
+
+    </div>
+
+{% endblock %}
