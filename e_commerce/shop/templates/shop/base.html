@@ -1,8 +1,7 @@
 {% load static %}
-{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <title>{{ title }}</title>
         <link type="text/css" href="{% static 'shop/css/styles.css' %}" rel="stylesheet">
@@ -74,12 +73,12 @@
             {% include 'shop/samples/catalog_menu.html' %}
 
             <form class="menu-find" action="{% url 'shop:search_results' %}" method="get">
-                <input name="q" type="text" placeholder={% translate "Поиск..." %} size="40">
+                <input name="q" type="text" placeholder="Поиск..." size="40">
             </form>
 
-            <div id="lang" class="menu-lang">
-                {% include 'shop/samples/lang_selection.html' %}
-            </div>
+<!--            <div id="lang" class="menu-lang">-->
+<!--                {% include 'shop/samples/lang_selection.html' %}-->
+<!--            </div>-->
 
             {% if user.is_authenticated %}
                 <a href="{% url 'shop:user_account' user.id %}" class="menu-btn" style="text-decoration:none">{{ user }}</a>

@@ -89,4 +89,4 @@ class PriceFilterForm(forms.Form):
         label="Від",
         required=False,
         widget=forms.NumberInput(attrs={'style': 'width:70px; margin-right:5px'}))
-    high = forms.DecimalField(label=_('До'), required=False, widget=forms.NumberInput(attrs={'style': 'width:70px'}))
+    high = forms.DecimalField(label="До", required=False, widget=forms.NumberInput(attrs={'style': 'width:70px'}))

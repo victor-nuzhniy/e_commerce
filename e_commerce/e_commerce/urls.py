@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from e_commerce import settings
-from e_commerce.shop.views import page_not_found
+from shop.views import page_not_found
 
 urlpatterns = [
     path('admin/', admin.site.urls),

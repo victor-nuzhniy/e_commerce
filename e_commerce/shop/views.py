@@ -15,7 +15,7 @@ from .utils import *
 import json
 import datetime
 
-from e_commerce.shop.models import Product
+from shop.models import Product
 
 
 def page_not_found(request, exception):
@@ -28,7 +28,7 @@ class ShopHome(DataMixin, ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        queryset = Product.objects.all().order_by('access_number').reverse().select_related('productimage')[:100]
+        queryset = Product.objects.all().order_by('access_number').reverse().prefetch_related('productimage_set')[:100]
         return get_product_list(queryset)
 
     def get_context_data(self, *, object_list=None, **kwargs):
