@@ -14,24 +14,24 @@
         {% endif %}
         <div class="cart-head">
             <div style="width:90%">
-            <a href="{% url 'shop:home' %}">{% translate "Продолжить покупки" %}</a>
+            <a href="{% url 'shop:home' %}">{% translate "Продовжити купівлю" %}</a>
             </div>
             <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
             <div class="cart-head-info">
-                <div>{% translate "Количество: " %}{{ order.get_order_items }} {% translate "шт" %}</div>
-                <div>{% translate "Всего: " %}{{ order.get_order_total }} {% translate "грн" %}</div>
+                <div>{% translate "Кількість: " %}{{ order.get_order_items }} {% translate "шт" %}</div>
+                <div>{% translate "Всього: " %}{{ order.get_order_total }} {% translate "грн" %}</div>
                 {% if flag %}
-                    <a href="{% url 'shop:checkout' %}">{% translate "Подтвердить заказ" %}</a>
+                    <a href="{% url 'shop:checkout' %}">{% translate "Підтвердити замовлення" %}</a>
                 {% endif %}
             </div>
         </div>
         <div class="cart-head">
             <div class="cart-info-legend">
-                <div class="cart-info-legend-int">{% translate "Изображение" %}</div>
+                <div class="cart-info-legend-int">{% translate "Зображення" %}</div>
                 <p class="cart-info-legend-product">{% translate "Товар" %}</p>
-                <div class="cart-info-legend-int">{% translate "Цена" %}</div>
-                <div class="cart-info-legend-int">{% translate "Количество" %}</div>
-                <div class="cart-info-legend-int">{% translate "Итого" %}</div>
+                <div class="cart-info-legend-int">{% translate "Ціна" %}</div>
+                <div class="cart-info-legend-int">{% translate "Кількість" %}</div>
+                <div class="cart-info-legend-int">{% translate "Загалом" %}</div>
             </div>
             <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
 

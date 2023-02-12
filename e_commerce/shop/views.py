@@ -43,7 +43,7 @@ class ShopHome(DataMixin, ListView):
             if order and not order.complete:
                 items = OrderItem.objects.filter(order=order)
                 cart = create_cookie_cart(items)
-        context.update({**self.get_user_context(title='Moby'),
+        context.update({**self.get_user_context(title='АМУНІЦІЯ ДЛЯ СВОЇХ'),
                         'page_range': page_range, 'super_category_flag': True,
                         'cartJson': json.dumps(cart), 'flag': flag})
         return context
