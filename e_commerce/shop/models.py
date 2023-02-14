@@ -45,50 +45,11 @@ class Category(models.Model):
 
 
 class CategoryFeatures(models.Model):
-    category = models.OneToOneField(Category, on_delete=models.CASCADE)
-    feature_name_1 = models.CharField(max_length=100, blank=True, verbose_name='1')
-    feature_name_2 = models.CharField(max_length=100, blank=True, verbose_name='2')
-    feature_name_3 = models.CharField(max_length=100, blank=True, verbose_name='3')
-    feature_name_4 = models.CharField(max_length=100, blank=True, verbose_name='4')
-    feature_name_5 = models.CharField(max_length=100, blank=True, verbose_name='5')
-    feature_name_6 = models.CharField(max_length=100, blank=True, verbose_name='6')
-    feature_name_7 = models.CharField(max_length=100, blank=True, verbose_name='7')
-    feature_name_8 = models.CharField(max_length=100, blank=True, verbose_name='8')
-    feature_name_9 = models.CharField(max_length=100, blank=True, verbose_name='9')
-    feature_name_10 = models.CharField(max_length=100, blank=True, verbose_name='10')
-    feature_name_11 = models.CharField(max_length=100, blank=True, verbose_name='11')
-    feature_name_12 = models.CharField(max_length=100, blank=True, verbose_name='12')
-    feature_name_13 = models.CharField(max_length=100, blank=True, verbose_name='13')
-    feature_name_14 = models.CharField(max_length=100, blank=True, verbose_name='14')
-    feature_name_15 = models.CharField(max_length=100, blank=True, verbose_name='15')
-    feature_name_16 = models.CharField(max_length=100, blank=True, verbose_name='16')
-    feature_name_17 = models.CharField(max_length=100, blank=True, verbose_name='17')
-    feature_name_18 = models.CharField(max_length=100, blank=True, verbose_name='18')
-    feature_name_19 = models.CharField(max_length=100, blank=True, verbose_name='19')
-    feature_name_20 = models.CharField(max_length=100, blank=True, verbose_name='20')
-    feature_name_21 = models.CharField(max_length=100, blank=True, verbose_name='21')
-    feature_name_22 = models.CharField(max_length=100, blank=True, verbose_name='22')
-    feature_name_23 = models.CharField(max_length=100, blank=True, verbose_name='23')
-    feature_name_24 = models.CharField(max_length=100, blank=True, verbose_name='24')
-    feature_name_25 = models.CharField(max_length=100, blank=True, verbose_name='25')
-    feature_name_26 = models.CharField(max_length=100, blank=True, verbose_name='26')
-    feature_name_27 = models.CharField(max_length=100, blank=True, verbose_name='27')
-    feature_name_28 = models.CharField(max_length=100, blank=True, verbose_name='28')
-    feature_name_29 = models.CharField(max_length=100, blank=True, verbose_name='29')
-    feature_name_30 = models.CharField(max_length=100, blank=True, verbose_name='30')
-    feature_name_31 = models.CharField(max_length=100, blank=True, verbose_name='31')
-    feature_name_32 = models.CharField(max_length=100, blank=True, verbose_name='32')
-    feature_name_33 = models.CharField(max_length=100, blank=True, verbose_name='33')
-    feature_name_34 = models.CharField(max_length=100, blank=True, verbose_name='34')
-    feature_name_35 = models.CharField(max_length=100, blank=True, verbose_name='35')
-    feature_name_36 = models.CharField(max_length=100, blank=True, verbose_name='36')
-    feature_name_37 = models.CharField(max_length=100, blank=True, verbose_name='37')
-    feature_name_38 = models.CharField(max_length=100, blank=True, verbose_name='38')
-    feature_name_39 = models.CharField(max_length=100, blank=True, verbose_name='39')
-    feature_name_40 = models.CharField(max_length=100, blank=True, verbose_name='40')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    feature_name = models.CharField(max_length=100, verbose_name='Характеристика категорії')
 
     def __str__(self):
-        return 'features name'
+        return self.feature_name
 
     class Meta:
         verbose_name = "Характеристика категорії"
@@ -141,7 +102,7 @@ class Product(models.Model):
     sold = models.BooleanField(verbose_name="Проданий")
     notes = models.CharField(max_length=200, blank=True, verbose_name="Додаткова інформація")
     last_accessed = models.DateTimeField(blank=True, null=True, verbose_name="Дата останнього відвідування")
-    access_number = models.PositiveBigIntegerField(blank=True, null=True, verbose_name="Кількість переглядів")
+    access_number = models.PositiveBigIntegerField(verbose_name="Кількість переглядів", default=0)
 
     def __str__(self):
         return self.name
@@ -155,50 +116,18 @@ class Product(models.Model):
 
 
 class ProductFeature(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    feature_1 = models.CharField(max_length=100, blank=True, verbose_name='1')
-    feature_2 = models.CharField(max_length=100, blank=True, verbose_name='2')
-    feature_3 = models.CharField(max_length=100, blank=True, verbose_name='3')
-    feature_4 = models.CharField(max_length=100, blank=True, verbose_name='4')
-    feature_5 = models.CharField(max_length=100, blank=True, verbose_name='5')
-    feature_6 = models.CharField(max_length=100, blank=True, verbose_name='6')
-    feature_7 = models.CharField(max_length=100, blank=True, verbose_name='7')
-    feature_8 = models.CharField(max_length=100, blank=True, verbose_name='8')
-    feature_9 = models.CharField(max_length=100, blank=True, verbose_name='9')
-    feature_10 = models.CharField(max_length=100, blank=True, verbose_name='10')
-    feature_11 = models.CharField(max_length=100, blank=True, verbose_name='11')
-    feature_12 = models.CharField(max_length=100, blank=True, verbose_name='12')
-    feature_13 = models.CharField(max_length=100, blank=True, verbose_name='13')
-    feature_14 = models.CharField(max_length=100, blank=True, verbose_name='14')
-    feature_15 = models.CharField(max_length=100, blank=True, verbose_name='15')
-    feature_16 = models.CharField(max_length=100, blank=True, verbose_name='16')
-    feature_17 = models.CharField(max_length=100, blank=True, verbose_name='17')
-    feature_18 = models.CharField(max_length=100, blank=True, verbose_name='18')
-    feature_19 = models.CharField(max_length=100, blank=True, verbose_name='19')
-    feature_20 = models.CharField(max_length=100, blank=True, verbose_name='20')
-    feature_21 = models.CharField(max_length=100, blank=True, verbose_name='21')
-    feature_22 = models.CharField(max_length=100, blank=True, verbose_name='22')
-    feature_23 = models.CharField(max_length=100, blank=True, verbose_name='23')
-    feature_24 = models.CharField(max_length=100, blank=True, verbose_name='24')
-    feature_25 = models.CharField(max_length=100, blank=True, verbose_name='25')
-    feature_26 = models.CharField(max_length=100, blank=True, verbose_name='26')
-    feature_27 = models.CharField(max_length=100, blank=True, verbose_name='27')
-    feature_28 = models.CharField(max_length=100, blank=True, verbose_name='28')
-    feature_29 = models.CharField(max_length=100, blank=True, verbose_name='29')
-    feature_30 = models.CharField(max_length=100, blank=True, verbose_name='30')
-    feature_31 = models.CharField(max_length=100, blank=True, verbose_name='31')
-    feature_32 = models.CharField(max_length=100, blank=True, verbose_name='32')
-    feature_33 = models.CharField(max_length=100, blank=True, verbose_name='33')
-    feature_34 = models.CharField(max_length=100, blank=True, verbose_name='34')
-    feature_35 = models.CharField(max_length=100, blank=True, verbose_name='35')
-    feature_36 = models.CharField(max_length=100, blank=True, verbose_name='36')
-    feature_37 = models.CharField(max_length=100, blank=True, verbose_name='37')
-    feature_38 = models.CharField(max_length=100, blank=True, verbose_name='38')
-    feature_39 = models.CharField(max_length=100, blank=True, verbose_name='39')
-    feature_40 = models.CharField(max_length=100, blank=True, verbose_name='40')
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name="Товар"
+    )
+    feature_name = models.ForeignKey(
+        CategoryFeatures,
+        on_delete=models.CASCADE,
+        verbose_name="Найменування характеристики",
+    )
+    feature = models.CharField(max_length=100, blank=True, null=True, verbose_name='Характеристика товара')
 
     def __str__(self):
-        return 'features'
+        return self.feature
 
     class Meta:
         verbose_name = "Характеристики товару"

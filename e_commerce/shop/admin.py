@@ -1,6 +1,6 @@
 from abc import ABC
 from django.utils.translation import gettext_lazy as _
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, forms, Widget
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import *
 import re
@@ -9,11 +9,21 @@ import re
 class ProductFeatureInline(admin.StackedInline):
     model = ProductFeature
     exclude = ('id',)
+    extra = 1
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "feature_name" and (
+                object_id := request.resolver_match.kwargs.get('object_id')
+        ):
+            product = Product.objects.get(id=object_id)
+            kwargs["queryset"] = CategoryFeatures.objects.filter(category=product.category)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(admin.StackedInline):
     model = ProductImage
     exclude = ('id',)
+    extra = 1
 
 
 # @admin.action(description='Copy item')
@@ -51,27 +61,8 @@ class ProductAdmin(admin.ModelAdmin):
         ProductImageInline,
     ]
     list_select_related = ['brand', 'category']
-    # actions = [duplicate_query_sets]
 
-    def get_formsets_with_inlines(self, request, obj=None):  # readable labels of product feature in admin.site
-        for inline in self.get_inline_instances(request, obj):
-            if isinstance(inline, ProductFeatureInline) and re.search(r'[0-9]+', request.path_info):
-                product_pk = re.search(r'[0-9]+', request.path_info)[0]
-                category = Product.objects.get(id=product_pk).category
-                category_features = CategoryFeatures.objects.filter(category=category)
-                if category_features:
-                    product_features_names = list(
-                        CategoryFeatures.objects.filter(category=category).values()[0].values())
-                    label_dict = {}
-                    for i in range(1, len(product_features_names) - 1):
-                        label_dict['feature_' + str(i)] = product_features_names[i + 1]
-                    formset_inline = inlineformset_factory(Product, ProductFeature,
-                                                           exclude=('id', 'product'), labels=label_dict)
-                    yield formset_inline, inline
-                else:
-                    yield inline.get_formset(request, obj), inline
-            else:
-                yield inline.get_formset(request, obj), inline
+    # actions = [duplicate_query_sets]
 
 
 class CategoryFeatureInline(admin.StackedInline):
@@ -89,7 +80,7 @@ class CategoryAdmin(admin.ModelAdmin):
     inlines = [
         CategoryFeatureInline
     ]
-    list_select_related = ['categoryfeatures', 'super_category']
+    list_select_related = ['super_category']
 
 
 class BrandAdmin(admin.ModelAdmin):
@@ -265,6 +256,10 @@ class SuperCategoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
 
 
+class CategoryFeaturesAdmin(admin.ModelAdmin):
+    list_display = ('category', 'feature_name',)
+
+
 # class ProductFeatureAdmin(admin.ModelAdmin):
 #     list_display = ['id', 'product']
 #     actions = [duplicate_query_sets_1]
@@ -290,6 +285,6 @@ admin.site.register(Sale, SaleAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem, OrderItemAdmin)
 admin.site.register(Stock, StockAdmin)
-admin.site.register(CategoryFeatures)
+admin.site.register(CategoryFeatures, CategoryFeaturesAdmin)
 # admin.site.register(ProductFeature, ProductFeatureAdmin)
 # admin.site.register(ProductImage, ProductImageAdmin)
