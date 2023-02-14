@@ -3,6 +3,7 @@ from abc import ABC
 
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.db.models import prefetch_related_objects
 from django.utils import timezone
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
@@ -28,7 +29,9 @@ class ShopHome(DataMixin, ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        queryset = Product.objects.all().order_by('access_number').reverse().prefetch_related('productimage_set')[:100]
+        queryset = Product.objects.all().order_by(
+            'access_number'
+        ).prefetch_related("productimage_set").reverse()[:100]
         return get_product_list(queryset)
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -235,9 +238,11 @@ class CategoryView(DataMixin, ListView):
         for category in categories:
             if category.super_category.id == id_super_category:
                 category_list.append(category)
-        products = Product.objects.filter(category__slug=slug).select_related('category', 'brand',
-                                                                              'productimage',
-                                                                              'category__super_category')
+        products = Product.objects.filter(
+            category__slug=slug
+        ).select_related(
+            'category', 'brand', 'category__super_category'
+        ).prefetch_related('productimage_set')
         brands = list({(product.brand.name, product.brand.name) for product in products})
         try:
             category = products[0].category if products else categories.get(slug=slug)
@@ -273,30 +278,34 @@ class ProductView(DataMixin, DetailView):
     template_name = 'shop/product.html'
     context_object_name = 'product'
     queryset = Product.objects.select_related(
-        'productfeature', 'productimage', 'category', 'category__super_category',
-        'category__categoryfeatures')
+        'category', 'category__super_category'
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = context['product']
         product.last_accessed = datetime.datetime.now(tz=timezone.utc)
-        product.access_number = 0 if product.access_number is None else product.access_number + 1
+        if product.access_number:
+            product.access_number += 1
+        else:
+            product.access_number = 0
+        product.access_number = (
+            0 if product.access_number is None else product.access_number + 1
+        )
         product.save()
-        title, lang = product.name, self.request.LANGUAGE_CODE
-        category_features = (
-            [v for k, v in model_to_dict(product.category.categoryfeatures).items() if k.endswith(lang)]
-            if hasattr(product.category, 'categoryfeatures') else [])
-        # category_features = CategoryFeatures.objects.filter(category=product.category)
-        product_features = (list(model_to_dict(product.productfeature).values())[2:]
-                            if hasattr(product, 'productfeature') else [])
-        product_images = (list(model_to_dict(product.productimage).values())[2:]
-                          if hasattr(product, 'productimage') else [])
+        title = product.name
+        product_features = ProductFeature.objects.filter(
+            product=product
+        ).select_related('feature_name')
+        product_images = ProductImage.objects.filter(product=product)
         product_review = product.review_set.all().select_related('review_author')
         product_eval = 0
         for review in product_review:
             product_eval += review.grade
-        product_eval = str(int(math.ceil(2 * product_eval / product_review.count()))) if product_review.count() else 0
-        new_context = {'category_features': category_features, 'product_features': product_features,
+        product_eval = str(int(
+            math.ceil(2 * product_eval / product_review.count())
+        )) if product_review.count() else 0
+        new_context = {'product_features': product_features,
                        'product_images': product_images, 'product_review': product_review, 'title': title,
                        'review_form': ReviewForm, 'product_eval': product_eval,
                        'super_category': product.category.super_category}
@@ -495,7 +504,7 @@ class CartView(DataMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         items, order, cartItems = get_cookies_cart(self.request)
-        new_context = {'title': _('Корзина'), 'order': order, 'items': items, 'flag': True}
+        new_context = {'title': 'Корзина', 'order': order, 'items': items, 'flag': True}
         context.update({**self.get_user_context(), **new_context})
         return context
 

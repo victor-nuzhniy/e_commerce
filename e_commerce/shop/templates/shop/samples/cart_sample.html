@@ -21,7 +21,7 @@
                 <div>{% translate "Кількість: " %}{{ order.get_order_items }} {% translate "шт" %}</div>
                 <div>{% translate "Всього: " %}{{ order.get_order_total }} {% translate "грн" %}</div>
                 {% if flag %}
-                    <a href="{% url 'shop:checkout' %}">{% translate "Підтвердити замовлення" %}</a>
+                    <a href="{% url 'shop:checkout' %}" style="text-align:center" >{% translate "Підтвердити замовлення" %}</a>
                 {% endif %}
             </div>
         </div>
@@ -34,10 +34,9 @@
                 <div class="cart-info-legend-int">{% translate "Загалом" %}</div>
             </div>
             <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
-
             {% for item in items %}
                 <div class="cart-info-legend">
-                    <div class="cart-info-legend-int"><img src="{{ item.product.productimage.image_1.url }}" style="width:auto; height:40px"></div>
+                    <div class="cart-info-legend-int"><img src="{{ item.product.productimage.image.image.url }}" style="width:auto; height:40px"></div>
                     <p class="cart-info-legend-product">{{ item.product.name | hide_brackets }}</p>
                     <div class="cart-info-legend-int">{{ item.product.price }} {% translate "грн" %}</div>
                     <div class="cart-info-legend-int">

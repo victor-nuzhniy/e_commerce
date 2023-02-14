@@ -73,7 +73,7 @@
             {% include 'shop/samples/catalog_menu.html' %}
 
             <form class="menu-find" action="{% url 'shop:search_results' %}" method="get">
-                <input name="q" type="text" placeholder="Поиск..." size="40">
+                <input name="q" type="text" placeholder="Пошук..." size="40">
             </form>
 
             {% if user.is_authenticated %}

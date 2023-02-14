@@ -34,7 +34,7 @@
         <div class="product-info">
             <div class="product-information">
             {% if product_images %}
-                <img class="product-main-photo" src="{{ product_images.0.url }}">
+                <img class="product-main-photo" src="{{ product_images.0.image.url }}">
             {% endif %}
             <div class="product-info-description">
                 <div style="display:flex; flex-direction:row; align-items:center; justify-content:space-between">
@@ -71,20 +71,21 @@
             </div>
             <div class="product-info">
                 <div class="product-features">
-                <div class="product-info-features">
-                    {% for category_feature in category_features %}
-                        {% if category_feature %}
-                        <div class="product-info-features-elem">{{ category_feature }}</div>
-                        <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
-                        {% endif %}
-                    {% endfor %}
-                </div>
+<!--                <div class="product-info-features">-->
+<!--                    {% for category_feature in category_features %}-->
+<!--                        {% if category_feature %}-->
+<!--                        <div class="product-info-features-elem">{{ category_feature }}</div>-->
+<!--                        <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">-->
+<!--                        {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                </div>-->
                 <div class="product-info-features">
                     {% for product_feature in product_features %}
-                        {% if product_feature %}
+                    <div style="display:flex; flex-direction:row;">
+                        <div class="product-info-features-elem">{{ product_feature.feature_name}}</div>
                         <div class="product-info-features-elem">{{ product_feature }}</div>
-                        <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
-                        {% endif %}
+                    </div>
+                    <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">
                     {% endfor %}
                 </div>
                 </div>
@@ -170,9 +171,7 @@
             </div>
             <div id="prod-photo" class="p-photo">
                 {% for image in product_images %}
-                    {% if image %}
-                        <div style="width: 200px; height: 200px; margin: 10px"><img class="product-photo"src="{{ image.url }}"></div>
-                    {% endif %}
+                        <div style="width: 200px; height: 200px; margin: 10px"><img class="product-photo"src="{{ image.image.url }}"></div>
                 {% endfor %}
             </div>
         </div>

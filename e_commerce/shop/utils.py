@@ -2,7 +2,7 @@ from django.contrib.auth.backends import ModelBackend, UserModel
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Q
+from django.db.models import Q, prefetch_related_objects
 from .forms import *
 from .models import *
 from types import SimpleNamespace
@@ -73,9 +73,9 @@ def check_quantity_in_stock(items):
                     quantity += x.quantity
         if quantity < item.quantity or not item.quantity:
             item.quantity = quantity
-            message = _("К сожалению, в одной позиции из списка товаров произошли изменения."
-                        " Пока Вы оформляли покупку, товар был приобретен другим покупателем."
-                        " Приносим свои извинения.")
+            message = _("Нажаль, в одній позиції зі списку виникли зміни."
+                        "Поки Ви оформлювали покупку, товар був придбаний іншим покупцем."
+                        "Приносимо свої вибачення.")
     return message, items
 
 
@@ -112,7 +112,11 @@ def get_cookies_cart(request):
         cart = {}
     items, order = [], {'get_order_total': 0, 'get_order_items': 0}
     cartItems, products_id_list = order['get_order_items'], []
-    products = Product.objects.filter(id__in=cart.keys()).select_related('productimage')
+    products = Product.objects.filter(
+        id__in=cart.keys()
+    ).prefetch_related(
+        'productimage_set'
+    )
     for product in products:
         try:
             i = str(product.id)
@@ -121,15 +125,15 @@ def get_cookies_cart(request):
             order['get_order_total'] += total
             order['get_order_items'] += cart[i]['quantity']
             try:
-                image = product.productimage.image_1
-            except AttributeError:
+                image = product.productimage_set.first()
+            except (AttributeError, IndexError) as e:
                 image = None
             item = NestedNamespace({
                 'product': {
                     'id': product.id,
                     'name': product.name,
                     'price': product.price,
-                    'productimage': {'image_1': image},
+                    'productimage': {'image': image},
                 },
                 'quantity': cart[i]['quantity'],
                 'get_total': cart[i]['quantity'] * product.price,
@@ -178,8 +182,10 @@ def get_pagination(page, product_list, items_per_page):
 def get_product_list(products):
     product_list = []
     for product in products:
-        image = None if not hasattr(product, 'productimage') else product.productimage.image[0]
+        image = product.productimage_set.first()
+        image = None if not image else image.image
         product_list.append((product, image))
+
     return product_list
 
 
