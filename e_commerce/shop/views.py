@@ -59,8 +59,7 @@ class RegisterUser(CreateView):
         Buyer.objects.create(user=user, name=user.username, email=user.email)
         login(self.request, user)
         response = HttpResponseRedirect(reverse('shop:home'))
-        authorization_handler(self.request, response, user)
-        return response
+        return authorization_handler(self.request, response, user)
 
 
 class ModLoginView(LoginView):
@@ -436,7 +435,8 @@ def updateItem(request):
     data = json.loads(request.body)
     productId = data['productId']
     action = data['action']
-    if buyer := check_buyer_existence(request):
+    user = request.user
+    if buyer := check_buyer_existence(user):
         perform_orderItem_actions(productId, action, buyer)
         return JsonResponse('Item was added', safe=False)
 

@@ -1,7 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 {% load shop_tags %}
-{% load i18n %}
+
 
 {% block content %}
     <div class="product-main">
@@ -20,16 +20,16 @@
                 {% if product_eval %}
                     <div class="star-ratings-css" title="{{ product_eval }}"></div>
                 {% else %}
-                    <div>{% translate "Товар чекає на Вашу оцінку" %}</div>
+                    <div>Товар чекає на Вашу оцінку</div>
                 {% endif %}
-                <div>{% translate "код: " %} {{ product.vendor_code }}</div>
+                <div>код: {{ product.vendor_code }}</div>
             </div>
         </div>
         <div class="product-menu">
-            <div id="about-product" style="cursor:pointer">{% translate "Все про товар" %}</div>
-            <div id="product-characteristic" style="cursor:pointer">{% translate "Характеристики" %}</div>
-            <div id="product-rev" style="cursor:pointer">{% translate "Відгуки" %}</div>
-            <div id="product-image" style="cursor:pointer">{% translate "Фото" %}</div>
+            <div id="about-product" style="cursor:pointer">Все про товар</div>
+            <div id="product-characteristic" style="cursor:pointer">Характеристики</div>
+            <div id="product-rev" style="cursor:pointer">Відгуки</div>
+            <div id="product-image" style="cursor:pointer">Фото</div>
         </div>
         <div class="product-info">
             <div class="product-information">
@@ -39,24 +39,24 @@
             <div class="product-info-description">
                 <div style="display:flex; flex-direction:row; align-items:center; justify-content:space-between">
                 {% if product.sold %}
-                    <div class="availability" style="color: rgb(200,200,200)">{% translate "Товар відсутній" %}</div>
+                    <div class="availability" style="color: rgb(200,200,200)">Товар відсутній</div>
                 {% else %}
-                    <div class="availability">{% translate "Є в наявності" %}</div>
+                    <div class="availability">Є в наявності</div>
                 {% endif %}
                     <div id="product-in-cart">
-                        <p>{% translate "Товар доданий до корзини" %}</p>
+                        <p>Товар доданий до корзини</p>
                     </div>
                 </div>
 
                 <div class="price">
-                    <div class="title">{{ product.price }} {% translate "грн" %}</div>
+                    <div class="title">{{ product.price }} грн</div>
                     <button data-product="{{ product.id }}" data-action="add" data-sold="{{ product.sold }}" class="product-basket-button">
                         <img src="{% static 'shop/images/white_basket.png' %}" width="30" height="30">
-                        {% translate "Купити" %}
+                        Купити
                     </button>
                 </div>
                 <div class="price">
-                    <div>{% translate "Продавець:" %} АМУНІЦІЯ ДЛЯ СВОЇХ</div>
+                    <div>Продавець: АМУНІЦІЯ ДЛЯ СВОЇХ</div>
                     <div>
                         <img src="{% static 'shop/images/main_icon.png' %}" width="25" height="25">
                     </div>
@@ -65,20 +65,12 @@
                     <p style="margin: 10px">{{ product.description }}
                 </div>
                 <div class="price">
-                    <p style="margin: 10px">{% translate "Оплата. Оплата при отриманні товару, Google Pay, Картой онлайн, Безготівковим для юридичних осіб, Безготівковим для фізичних осіб." %}
+                    <p style="margin: 10px">Оплата. Оплата при отриманні товару, Google Pay, Картой онлайн, Безготівковим для юридичних осіб, Безготівковим для фізичних осіб.
                 </div>
             </div>
             </div>
             <div class="product-info">
                 <div class="product-features">
-<!--                <div class="product-info-features">-->
-<!--                    {% for category_feature in category_features %}-->
-<!--                        {% if category_feature %}-->
-<!--                        <div class="product-info-features-elem">{{ category_feature }}</div>-->
-<!--                        <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:98%">-->
-<!--                        {% endif %}-->
-<!--                    {% endfor %}-->
-<!--                </div>-->
                 <div class="product-info-features">
                     {% for product_feature in product_features %}
                     <div style="display:flex; flex-direction:row;">
@@ -91,7 +83,7 @@
                 </div>
                 <div id="product-reviews" class="product-info-review">
                     <div class="price" style="width:100%; max-width:600px">
-                        <h3>{% translate "Залиште свій відгук про цей товар" %}</h3>
+                        <h3>Залиште свій відгук про цей товар</h3>
                     </div>
                     {% if user.is_authenticated %}
                     <form class="review" action="{% url 'shop:product_form' product.slug %}" method="post">
@@ -115,11 +107,11 @@
                         <input type="hidden" name="review_author" value="{{ user.id }}">
                         <input type="hidden" name="product" value="{{ product.id }}">
                         <div class="form-errors">{{ review_form.review_text.errors }}</div>
-                        <input class="product-basket-button" style="margin:3px; font-size:18px" type="submit" value={% translate "Зберегти" %}>
+                        <input class="product-basket-button" style="margin:3px; font-size:18px" type="submit" value="Зберегти">
                     </form>
                     {% else %}
                         <div class="price" style="width:100%; max-width:600px">
-                            <h3>{% translate "Авторизуйтесь, щоб залишити відгук про цей товар" %}</h3>
+                            <h3>Авторизуйтесь, щоб залишити відгук про цей товар</h3>
                         </div>
                     {% endif %}
                     {% for review in product_review %}
