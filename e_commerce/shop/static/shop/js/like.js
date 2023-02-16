@@ -9,7 +9,7 @@ for (let i = 0; i < likeBtn.length; i++){
 }
 
 function addLike(review, author, like){
-    var url = '/ru/update_like/'
+    var url = '/update_like/'
 
     fetch(url, {
         method: 'POST',
