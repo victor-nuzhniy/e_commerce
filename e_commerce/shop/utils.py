@@ -4,18 +4,32 @@ from typing import Optional, Dict, List, Tuple, Union, Any
 from django.conf.global_settings import AUTH_USER_MODEL
 from django.contrib.auth.backends import ModelBackend, UserModel
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import Q, F, QuerySet, Prefetch
 from django.http import JsonResponse, QueryDict, HttpRequest, HttpResponseRedirect
 
-from .forms import *
-from .models import *
+from .forms import CustomUserCreationForm, CheckoutForm
+from .models import (
+    SuperCategory,
+    Category,
+    Stock,
+    Order,
+    OrderItem,
+    Product,
+    ProductImage,
+    Buyer,
+    Sale,
+    Review,
+    Like,
+)
 from types import SimpleNamespace
 from django.core.exceptions import ObjectDoesNotExist
 import json
 from django.utils.translation import gettext_lazy as _
 from django.core.cache import cache
+
+from .querysets import querysets
 
 
 class EmailBackend(ModelBackend):
@@ -71,12 +85,10 @@ class DataMixin:
         super_categories = cache.get('super_categories')
         category_list = cache.get('category_list')
         if not super_categories:
-            super_categories = SuperCategory.objects.all().prefetch_related(
-                Prefetch('category_set', queryset=Category.objects.defer('slug'))
-            )
+            super_categories = querysets.get_super_category_queryset_for_data_mixin()
             cache.set('super_categories', super_categories, 1000)
         if not category_list:
-            category_list = Category.objects.defer('slug').select_related('super_category')
+            category_list = querysets.get_category_queryset_for_data_mixin()
             cache.set('category_list', category_list, 1000)
         context['super_categories'] = super_categories
         context['category_list'] = category_list
@@ -108,7 +120,7 @@ def check_quantity_in_stock(
         about it. If everything ok, the message is empty.
     """
     message, stock_list = '', []
-    product_ids = [item.product.id for item in items]
+    product_ids = {item.product.id for item in items}
     stock = Stock.objects.filter(product__in=product_ids).select_related('product')
     for item in items:
         quantity = 0
@@ -166,7 +178,7 @@ def create_item(
     """
     return NestedNamespace({
         'product': {
-            'id': product.id,
+            'id': product.pk,
             'name': product.name,
             'price': product.price,
             'productimage': {'image': image},
@@ -213,7 +225,7 @@ def get_cookies_cart(
             order['get_order_items'] += cart[i]['quantity']
             try:
                 image = product.productimage_set.first()
-            except (AttributeError, IndexError) as e:
+            except (AttributeError, IndexError):
                 image = None
             items.append(create_item(product, image, cart, i))
         except ObjectDoesNotExist:
@@ -480,9 +492,9 @@ def modify_like_with_response(
             review=review, like_author=author, like=like, dislike=dislike
         )
         if like:
-            review.like_num = review.like_num + 1 if review.like_num else 1
+            review.like_num = F('like_num') + 1 if review.like_num else 1
         else:
-            review.dislike_num = review.dislike_num + 1 if review.dislike_num else 1
+            review.dislike_num = F('dislike_num') + 1 if review.dislike_num else 1
         review.save()
         return JsonResponse('Like was added', safe=False)
     return JsonResponse('Like was not added', safe=False)

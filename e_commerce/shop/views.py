@@ -1,22 +1,53 @@
-import math
 from abc import ABC
 
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.db.models import prefetch_related_objects, Prefetch
+from django.contrib.auth.models import User
+from django.db.models import F
 from django.utils import timezone
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
 from django.http import HttpResponseNotFound, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, FormView, TemplateView
-from django.forms.models import model_to_dict
-from .utils import *
+from .forms import (
+    CustomUserCreationForm,
+    BuyerAccountForm,
+    ReviewForm,
+    BrandFilterForm,
+    PriceFilterForm,
+    CheckoutForm,
+)
+from .models import Product, Category, Buyer, Review
+from .utils import (
+    DataMixin,
+    check_quantity_in_stock,
+    get_cookies_cart,
+    correct_cart_order,
+    handling_brand_price_form,
+    get_product_list,
+    cart_authorization_handler,
+    define_cart,
+    define_page_range,
+    clear_not_completed_order,
+    define_order_list,
+    define_buyer_data,
+    define_category_with_super_category,
+    define_category_list,
+    define_brand_list,
+    define_category_title_product_list,
+    define_product_eval,
+    modify_like_with_response,
+    check_buyer_existence,
+    perform_orderItem_actions,
+    get_checkout_form,
+    get_response_dict_with_sale_creation,
+    get_updated_response_dict,
+)
 import json
 import datetime
 
-from shop.models import Product
+from .querysets import querysets
 
 
 def page_not_found(request, exception):
@@ -29,10 +60,7 @@ class ShopHome(DataMixin, ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        queryset = Product.objects.only('name', 'price').order_by(
-            'access_number'
-        ).prefetch_related("productimage_set").reverse()[:100]
-        return get_product_list(queryset)
+        return get_product_list(querysets.get_product_queryset_for_shop_home_view())
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -81,10 +109,7 @@ class AdminLoginView(LoginView):
     def form_valid(self, form):
         user = form.get_user()
         response = super().form_valid(form)
-        try:
-            buyer = user.buyer
-        except ObjectDoesNotExist:
-            buyer = None
+        buyer = check_buyer_existence(user)
         clear_not_completed_order(buyer)
         cart = json.loads(self.request.COOKIES.get('cart'))
         if cart:
@@ -151,22 +176,7 @@ class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
 
     def get_context_data(self, **kwargs):
         user = self.request.user
-        orders = Order.objects.filter(
-            buyer__user=user
-        ).select_related('buyer').prefetch_related(
-            Prefetch(
-                'sale_set',
-                queryset=Sale.objects.only('sale_date'),
-            ),
-            Prefetch(
-                'orderitem_set',
-                queryset=OrderItem.objects.only('product', 'quantity'),
-            ),
-            Prefetch(
-                'orderitem_set__product',
-                queryset=Product.objects.only('name', 'price'),
-            ),
-        ).order_by('date_ordered').reverse()
+        orders = querysets.get_order_queryset_for_user_account_view(user)
         order_list = define_order_list(orders)
         self.initial = define_buyer_data(order_list, user)
         context = super().get_context_data(**kwargs)
@@ -215,14 +225,7 @@ class CategoryView(DataMixin, ListView):
         categories, slug = data_context['category_list'], self.kwargs['category_slug']
 
         category_list = define_category_list(slug, data_context['category_list'])
-        products = Product.objects.filter(
-            category__slug=slug
-        ).select_related(
-            'category', 'brand', 'category__super_category'
-        ).only(
-            'name', 'price', 'brand', 'category'
-        ).defer('category__slug', 'brand__slug').prefetch_related('productimage_set')
-
+        products = querysets.get_product_queryset_for_category_view(slug)
         brands = define_brand_list(products)
 
         category, title, product_list = define_category_title_product_list(
@@ -263,19 +266,7 @@ class ProductView(DataMixin, DetailView):
     slug_url_kwarg = 'product_slug'
     template_name = 'shop/product.html'
     context_object_name = 'product'
-    queryset = Product.objects.select_related(
-        'category', 'category__super_category'
-    ).only(
-        'name',
-        'description',
-        'category',
-        'vendor_code',
-        'price',
-        'sold',
-        'category__name',
-        'category__super_category',
-        'category__super_category__name'
-    )
+    queryset = querysets.get_product_queryset_for_product_view()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -284,24 +275,11 @@ class ProductView(DataMixin, DetailView):
         product.access_number = F('access_number') + 1
         product.save()
         title = product.name
-        product_features = ProductFeature.objects.filter(
+        product_features = querysets.get_product_features_queryset_for_product_view(
             product=product
-        ).defer(
-            'feature_name__category'
-        ).select_related('feature_name')
-        product_images = ProductImage.objects.filter(product=product)
-        product_review = Review.objects.filter(
-            product=product
-        ).select_related('review_author').only(
-            'product',
-            'grade',
-            'review_text',
-            'review_date',
-            'review_author',
-            'like_num',
-            'dislike_num',
-            'review_author__username',
         )
+        product_images = querysets.get_product_image_queryset_for_product_view(product)
+        product_review = querysets.get_review_queryset_for_product_view(product)
         product_eval = define_product_eval(product_review)
         new_context = {'product_features': product_features,
                        'product_images': product_images,
@@ -369,13 +347,7 @@ class SearchResultView(DataMixin, ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        query = self.request.GET.get('q')
-        return Product.objects.filter(name__icontains=query).only(
-            'name',
-            'price',
-        ).prefetch_related(
-            'productimage_set'
-        ).order_by('access_number').reverse()[:100]
+        return querysets.get_product_for_search_result_view(self.request.GET.get('q'))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         object_list = get_product_list(self.get_queryset())
