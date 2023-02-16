@@ -59,7 +59,7 @@ class RegisterUser(CreateView):
         Buyer.objects.create(user=user, name=user.username, email=user.email)
         login(self.request, user)
         response = HttpResponseRedirect(reverse('shop:home'))
-        return authorization_handler(self.request, response, user)
+        return cart_authorization_handler(self.request, response, user)
 
 
 class ModLoginView(LoginView):
@@ -72,7 +72,7 @@ class ModLoginView(LoginView):
         user = form.get_user()
         login(self.request, user)
         response = HttpResponseRedirect(self.get_success_url())
-        return authorization_handler(self.request, response, user)
+        return cart_authorization_handler(self.request, response, user)
 
 
 class AdminLoginView(LoginView):

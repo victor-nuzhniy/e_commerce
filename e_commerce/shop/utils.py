@@ -31,7 +31,7 @@ class EmailBackend(ModelBackend):
             **kwargs: Any,
     ) -> Optional[User]:
         """
-            Make it possible of using email as username. Default behaviour is present.
+            Makes it possible of using email as username. Default behaviour is present.
         """
         try:
             user = UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=username))
@@ -45,8 +45,8 @@ class EmailBackend(ModelBackend):
 
     def get_user(self, user_id: int) -> Optional[User]:
         """
-            Additional changed method for EmailBackend functionality.
-            Return user, if it can be authenticated, or None with ability to catch
+            Additionally changed method for EmailBackend functionality.
+            Returns user, if it can be authenticated, or None with ability to catch
             UserModel.DoesNotExist exception.
         """
         try:
@@ -60,10 +60,11 @@ class DataMixin:
     def get_user_context(self, **kwargs: Any) -> Dict:
         """
             Method for obtaining lists of super_categories and categories,
-            putting them in context dict and file cash.
-            Additionally put user_creation_form, user_login_form in context dict
-            to make it accessible from every view using Datamixin.
-            Also put in context dict cartItem data received from request cookies.
+            putting them in context dictionary and file cash.
+            Additionally puts user_creation_form, user_login_form in context dictionary
+            to make it accessible from every view using DataMixin.
+            Also puts in context dictionary cartItem data received
+            from request cookies.
         """
         context = kwargs
         context['user_creation_form'] = CustomUserCreationForm(auto_id=False)
@@ -87,10 +88,12 @@ class DataMixin:
 
 
 class NestedNamespace(SimpleNamespace):
-    def __init__(self, dictionary, **kwargs):
-        """
+    """
+    Creates a dictionary like object with dot notation.
+    Nested construction can be accessed via dot notation too.
+    """
 
-        """
+    def __init__(self, dictionary, **kwargs):
         super().__init__(**kwargs)
         for key, value in dictionary.items():
             if isinstance(value, dict):
@@ -102,6 +105,12 @@ class NestedNamespace(SimpleNamespace):
 def check_quantity_in_stock(
         items: List[NestedNamespace]
 ) -> Tuple[str, List[NestedNamespace]]:
+    """
+        Takes as an argument list of NestedNamespace objects, checks quantity of
+        products, which is mentioned in items, in stock, and if there is no such
+        amount, decreases appropriate item quantity, adding special message to mention
+        about it. If everything ok, the message is empty.
+    """
     message, stock_list = '', []
     product_ids = [item.product.id for item in items]
     stock = Stock.objects.filter(product__in=product_ids).select_related('product')
@@ -121,6 +130,11 @@ def check_quantity_in_stock(
 
 
 def decreasing_stock_items(items: List[OrderItem]) -> None:
+    """
+        Decreases quantity of stock products after sale is performed.
+        If quantity of one product decreases to 0, sets product sold
+        field to True.
+    """
     for item in items:
         q = Stock.objects.filter(product=item.product.id)
         quantity = item.quantity
@@ -148,9 +162,12 @@ def decreasing_stock_items(items: List[OrderItem]) -> None:
 def create_item(
         product: Product,
         image: Optional[ProductImage],
-        cart: Dict[Optional[int, Dict[str, int]]],
+        cart: Dict[int, Dict[str, int]],
         index: str,
 ) -> NestedNamespace:
+    """
+        Returns created NestedNamespace object with appropriate characteristics.
+    """
     return NestedNamespace({
         'product': {
             'id': product.id,
@@ -163,7 +180,13 @@ def create_item(
     })
 
 
-def define_cart(request: HttpRequest) -> Dict[Optional[int, Dict[str, int]]]:
+def define_cart_from_cookies(
+        request: HttpRequest
+) -> Dict[int, Dict[str, int]]:
+    """
+        Defines cart from request cookies returning empty dictionary in case of
+        its absence and returns it.
+    """
     try:
         cart = json.loads(request.COOKIES['cart'].replace("'", '''"'''))
     except KeyError:
@@ -174,7 +197,12 @@ def define_cart(request: HttpRequest) -> Dict[Optional[int, Dict[str, int]]]:
 def get_cookies_cart(
         request: HttpRequest
 ) -> Tuple[List[NestedNamespace], Dict[str, int], int]:
-    cart = define_cart(request)
+    """
+        Creates cart dictionary from request cookies, creates cart items number,
+        creates items list with NestedNamespace objects in it. The constructions
+        are used for cart templates info transfer.
+    """
+    cart = define_cart_from_cookies(request)
     items, order = [], {'get_order_total': 0, 'get_order_items': 0}
     cartItems = order['get_order_items']
     products = Product.objects.filter(id__in=cart.keys()).prefetch_related(
@@ -200,6 +228,10 @@ def get_cookies_cart(
 def correct_cart_order(
         items: List[NestedNamespace], order: Dict[str, int]
 ) -> Tuple[Dict[int, Dict[str, int]], Dict[str, int]]:
+    """
+        Takes NestedNamespace objects list and order as arguments
+        and corrects cart and order data.
+    """
     cart, number, total = {}, 0, 0
     for item in items:
         if item.quantity:
@@ -215,6 +247,10 @@ def correct_cart_order(
 def handling_brand_price_form(
         data: QueryDict, product_list: List[Tuple[Product, str]]
 ) -> List[Tuple[Product, str]]:
+    """
+        Creates filter logic. Filter uses brand and prise as parameters
+        for filtering output product list.
+    """
     if data:
         filtered_brand_set = set(data.getlist('brand'))
         low = int(data['low']) if data['low'] else 0
@@ -242,6 +278,9 @@ def handling_brand_price_form(
 
 
 def get_product_list(products: QuerySet) -> List[Tuple[Product, str]]:
+    """
+        Creates list of tuple with product and images objects.
+    """
     product_list = []
     for product in products:
         image = product.productimage_set.first()
@@ -251,6 +290,9 @@ def get_product_list(products: QuerySet) -> List[Tuple[Product, str]]:
 
 
 def get_cart_item_quantity(data: Dict[int, Dict[str, int]]) -> int:
+    """
+        Gets quantity of elements in items.
+    """
     quantity = 0
     for item in data.values():
         quantity += int(list(item.values())[0])
@@ -258,6 +300,9 @@ def get_cart_item_quantity(data: Dict[int, Dict[str, int]]) -> int:
 
 
 def create_cookie_cart(items: QuerySet) -> Dict[int, Dict[str, int]]:
+    """
+        Creates cart for coolies from QuerySet objects list.
+    """
     cart = {}
     for item in items:
         if item.quantity:
@@ -265,11 +310,17 @@ def create_cookie_cart(items: QuerySet) -> Dict[int, Dict[str, int]]:
     return cart
 
 
-def authorization_handler(
+def cart_authorization_handler(
         request: HttpRequest,
         response: HttpResponseRedirect,
         user: AUTH_USER_MODEL,
 ) -> HttpResponseRedirect:
+    """
+        Gets cart data from cookies, checks if authenticated buyer has
+        not completed order, deletes this order and its data,
+        creates new order using cookies cart data.
+        If cart is empty, return flag in cookies with 1 sec lifetime.
+    """
     cookie_cart = json.loads(request.COOKIES.get('cart'))
     if cookie_cart:
         buyer = Buyer.objects.get_or_create(user=user)
@@ -292,6 +343,11 @@ def authorization_handler(
 def define_cart(
         flag: Union[bool, str], user: Union[AUTH_USER_MODEL, AnonymousUser]
 ) -> Dict[int, Dict[str, int]]:
+    """
+        If cookies cart is empty after login buyer creates cart from existing
+        order data. It uses flag var from cookies. With empty flag returns
+        empty cart.
+    """
     cart = {}
     if flag:
         order = Order.objects.filter(buyer__user=user).last()
@@ -302,6 +358,9 @@ def define_cart(
 
 
 def define_page_range(context: Dict) -> Optional[Dict]:
+    """
+        Define page range from paginator in context data.
+    """
     page_range = None
     if context['is_paginated']:
         page_range = context['paginator'].get_elided_page_range(
@@ -311,6 +370,9 @@ def define_page_range(context: Dict) -> Optional[Dict]:
 
 
 def clear_not_completed_order(buyer: Optional[Buyer]) -> None:
+    """
+        Clear not completed order if buyer and such order exists.
+    """
     if buyer:
         lastOrder = Order.objects.filter(buyer=buyer).last()
         if lastOrder and not lastOrder.complete:
@@ -321,6 +383,10 @@ def clear_not_completed_order(buyer: Optional[Buyer]) -> None:
 
 
 def define_order_list(orders: QuerySet) -> List[Tuple[Order, Sale, QuerySet]]:
+    """
+        Creates info list with order, sale and order items info for buyer
+        account representation.
+    """
     order_list = []
     for order in orders:
         sale = order.sale_set.all().first() if order.complete else "Не оплачений"
@@ -333,6 +399,9 @@ def define_buyer_data(
         order_list: Optional[List[Tuple]],
         user: Union[AUTH_USER_MODEL, AnonymousUser],
 ) -> Dict[str, str]:
+    """
+        Defines buyer and returns data for initializing form.
+    """
     if order_list:
         buyer = order_list[0][0].buyer
     else:
@@ -355,6 +424,9 @@ def define_buyer_data(
 def define_category_with_super_category(
         categories: QuerySet, sc_id: int
 ) -> List[Category]:
+    """
+        Defines category list for given super category id.
+    """
     category_list = []
     for category in categories:
         if category.super_category.id == sc_id:
@@ -363,6 +435,10 @@ def define_category_with_super_category(
 
 
 def define_category_list(slug: str, categories: QuerySet) -> List[Category]:
+    """
+        Finds out super category id and defines category list
+        for this id.
+    """
     super_category_id = None
     for category in categories:
         if category.slug == slug:
@@ -372,6 +448,10 @@ def define_category_list(slug: str, categories: QuerySet) -> List[Category]:
 
 
 def define_brand_list(products: QuerySet) -> List[Tuple[str, str]]:
+    """
+        Defines unique tuple list with double brand name for
+        products in given queryset.
+    """
     return list(
         {(product.brand.name, product.brand.name) for product in products}
     )
@@ -380,6 +460,9 @@ def define_brand_list(products: QuerySet) -> List[Tuple[str, str]]:
 def define_category_title_product_list(
         products: QuerySet, slug: str, categories: QuerySet
 ) -> Tuple[Category, str, List[Tuple[Product, str]]]:
+    """
+        Defines category, title name and product list from given data.
+    """
     try:
         category = products[0].category if products else categories.get(slug=slug)
         product_list, title = get_product_list(products), category.name
@@ -389,6 +472,9 @@ def define_category_title_product_list(
 
 
 def define_product_eval(product_review: QuerySet) -> Union[str, int]:
+    """
+        Calculates product evaluation.
+    """
     product_eval = 0
     for review in product_review:
         product_eval += review.grade
@@ -401,6 +487,10 @@ def define_product_eval(product_review: QuerySet) -> Union[str, int]:
 def modify_like_with_response(
         review: Review, author: User, like: bool, dislike: bool
 ) -> JsonResponse:
+    """
+        Creates Like objects if not exists, modifies and saves like
+        data. If Like objects exists for this author, nothing happens.
+    """
     if not Like.objects.filter(review=review, like_author=author):
         Like.objects.create(
             review=review, like_author=author, like=like, dislike=dislike
@@ -414,7 +504,14 @@ def modify_like_with_response(
     return JsonResponse('Like was not added', safe=False)
 
 
-def check_buyer_existence(user: Union[AUTH_USER_MODEL, AnonymousUser]) -> Optional[Buyer]:
+def check_buyer_existence(
+        user: Union[AUTH_USER_MODEL, AnonymousUser]
+) -> Optional[Buyer]:
+    """
+        Check buyer existence for given user. This can happen for
+        admin workers, that became users not via buyer registration
+        view.
+    """
     try:
         buyer = Buyer.objects.get(user=user)
     except ObjectDoesNotExist:
@@ -423,6 +520,9 @@ def check_buyer_existence(user: Union[AUTH_USER_MODEL, AnonymousUser]) -> Option
 
 
 def perform_orderItem_actions(product_id: int, action: str, buyer: Buyer) -> None:
+    """
+        Modifies order items data in dependence from command.
+    """
     product = Product.objects.get(id=product_id)
     if not product.sold:
         order, created = Order.objects.get_or_create(buyer=buyer, complete=False)
@@ -439,6 +539,10 @@ def perform_orderItem_actions(product_id: int, action: str, buyer: Buyer) -> Non
 
 
 def get_order_with_cleaning(user: Union[AUTH_USER_MODEL, AnonymousUser]) -> Order:
+    """
+        Gets or creates order. If order was got and not completed,
+        clears its data.
+    """
     order, created = Order.objects.get_or_create(buyer=user.buyer, complete=False)
     if not created:
         orderItems = OrderItem.objects.filter(order=order)
@@ -450,12 +554,19 @@ def get_order_with_cleaning(user: Union[AUTH_USER_MODEL, AnonymousUser]) -> Orde
 
 
 def update_buyer(user: Union[AUTH_USER_MODEL, AnonymousUser], data: Dict) -> None:
+    """
+        Updates buyer with given info.
+    """
     user.buyer.name, user.buyer.email = data['name'], data['email']
     user.buyer.tel, user.buyer.address = data['tel'], data['address']
     user.buyer.save()
 
 
 def get_order(user: Union[AUTH_USER_MODEL, AnonymousUser], data: Dict) -> Order:
+    """
+        Gets order, if user is authenticated, otherwise creates buyer and
+        its order.
+    """
     if user.is_authenticated:
         order = get_order_with_cleaning(user)
         update_buyer(user, data)
@@ -472,6 +583,10 @@ def get_order(user: Union[AUTH_USER_MODEL, AnonymousUser], data: Dict) -> Order:
 def get_order_items_list(
         items: List[NestedNamespace], order: Order
 ) -> List[OrderItem]:
+    """
+        Creates order items list from NestedNamespace objects
+        list for specific order.
+    """
     order_item_list = []
     for item in items:
         orderItem = OrderItem.objects.create(
@@ -484,6 +599,9 @@ def get_order_items_list(
 
 
 def get_message_and_warning(items: List[OrderItem]) -> Tuple[str, Optional[str]]:
+    """
+        Defines message and warning.
+    """
     message, warning = '', None
     if items:
         message, warning = 'Оплата пройшла успішно', ':)'
@@ -491,6 +609,10 @@ def get_message_and_warning(items: List[OrderItem]) -> Tuple[str, Optional[str]]
 
 
 def get_checkout_form(user: Union[AUTH_USER_MODEL, AnonymousUser]) -> CheckoutForm:
+    """
+        Returns Checkout form with initial data, if user
+        is authenticated.
+    """
     if user.is_authenticated:
         return CheckoutForm(
             initial=define_buyer_data(order_list=None, user=user)
@@ -503,6 +625,10 @@ def get_response_dict_with_sale_creation(
         user: Union[AUTH_USER_MODEL, AnonymousUser],
         items: List[NestedNamespace],
 ) -> Dict[str, Union[str, List, Dict[str, int]]]:
+    """
+        Creates response dict with Sale creation after
+        approving buying.
+    """
     data = form.cleaned_data
     order = get_order(user, data)
     items = get_order_items_list(items, order)
@@ -530,6 +656,12 @@ def get_updated_response_dict(
         order: Dict[str, int],
         args: QueryDict,
 ) -> Dict:
+    """
+        Updating context dict after some problems with products
+        availability (for example, if there is no such quantity),
+        updates cart in accordance with available amount of
+        products.
+    """
     cart = {}
     if message:
         cart, order = correct_cart_order(items, order)
