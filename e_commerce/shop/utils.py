@@ -6,11 +6,8 @@ from django.contrib.auth.backends import ModelBackend, UserModel
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import MultipleObjectsReturned
-from django.core.handlers.wsgi import WSGIRequest
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Q, prefetch_related_objects, F, QuerySet
+from django.db.models import Q, F, QuerySet, Prefetch
 from django.http import JsonResponse, QueryDict, HttpRequest, HttpResponseRedirect
-from django.utils.functional import SimpleLazyObject
 
 from .forms import *
 from .models import *
@@ -19,7 +16,6 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from django.utils.translation import gettext_lazy as _
 from django.core.cache import cache
-from django.conf import settings
 
 
 class EmailBackend(ModelBackend):
@@ -76,11 +72,11 @@ class DataMixin:
         category_list = cache.get('category_list')
         if not super_categories:
             super_categories = SuperCategory.objects.all().prefetch_related(
-                'category_set'
+                Prefetch('category_set', queryset=Category.objects.defer('slug'))
             )
             cache.set('super_categories', super_categories, 1000)
         if not category_list:
-            category_list = Category.objects.all().select_related('super_category')
+            category_list = Category.objects.defer('slug').select_related('super_category')
             cache.set('category_list', category_list, 1000)
         context['super_categories'] = super_categories
         context['category_list'] = category_list
@@ -162,7 +158,7 @@ def decreasing_stock_items(items: List[OrderItem]) -> None:
 def create_item(
         product: Product,
         image: Optional[ProductImage],
-        cart: Dict[int, Dict[str, int]],
+        cart: Dict[Union[int, str], Dict[str, int]],
         index: str,
 ) -> NestedNamespace:
     """
@@ -263,18 +259,6 @@ def handling_brand_price_form(
                 )
             )
     return product_list
-
-
-# def get_pagination(page, product_list, items_per_page):
-#     paginator = Paginator(product_list, items_per_page)
-#     page_range = paginator.get_elided_page_range(page, on_each_side=1, on_ends=1)
-#     try:
-#         page_obj = paginator.page(page)
-#     except PageNotAnInteger:
-#         page_obj = paginator.page(1)
-#     except EmptyPage:
-#         page_obj = paginator.page(paginator.num_pages)
-#     return page_obj, paginator, page_obj.object_list, page_range, page_obj.has_other_pages()
 
 
 def get_product_list(products: QuerySet) -> List[Tuple[Product, str]]:

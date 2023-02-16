@@ -3,7 +3,7 @@ from abc import ABC
 
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.db.models import prefetch_related_objects
+from django.db.models import prefetch_related_objects, Prefetch
 from django.utils import timezone
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
@@ -29,7 +29,7 @@ class ShopHome(DataMixin, ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        queryset = Product.objects.all().order_by(
+        queryset = Product.objects.only('name', 'price').order_by(
             'access_number'
         ).prefetch_related("productimage_set").reverse()[:100]
         return get_product_list(queryset)
@@ -154,7 +154,18 @@ class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
         orders = Order.objects.filter(
             buyer__user=user
         ).select_related('buyer').prefetch_related(
-            'sale_set', 'orderitem_set', 'orderitem_set__product'
+            Prefetch(
+                'sale_set',
+                queryset=Sale.objects.only('sale_date'),
+            ),
+            Prefetch(
+                'orderitem_set',
+                queryset=OrderItem.objects.only('product', 'quantity'),
+            ),
+            Prefetch(
+                'orderitem_set__product',
+                queryset=Product.objects.only('name', 'price'),
+            ),
         ).order_by('date_ordered').reverse()
         order_list = define_order_list(orders)
         self.initial = define_buyer_data(order_list, user)
@@ -208,7 +219,9 @@ class CategoryView(DataMixin, ListView):
             category__slug=slug
         ).select_related(
             'category', 'brand', 'category__super_category'
-        ).prefetch_related('productimage_set')
+        ).only(
+            'name', 'price', 'brand', 'category'
+        ).defer('category__slug', 'brand__slug').prefetch_related('productimage_set')
 
         brands = define_brand_list(products)
 
@@ -252,6 +265,16 @@ class ProductView(DataMixin, DetailView):
     context_object_name = 'product'
     queryset = Product.objects.select_related(
         'category', 'category__super_category'
+    ).only(
+        'name',
+        'description',
+        'category',
+        'vendor_code',
+        'price',
+        'sold',
+        'category__name',
+        'category__super_category',
+        'category__super_category__name'
     )
 
     def get_context_data(self, **kwargs):
@@ -263,9 +286,22 @@ class ProductView(DataMixin, DetailView):
         title = product.name
         product_features = ProductFeature.objects.filter(
             product=product
+        ).defer(
+            'feature_name__category'
         ).select_related('feature_name')
         product_images = ProductImage.objects.filter(product=product)
-        product_review = product.review_set.all().select_related('review_author')
+        product_review = Review.objects.filter(
+            product=product
+        ).select_related('review_author').only(
+            'product',
+            'grade',
+            'review_text',
+            'review_date',
+            'review_author',
+            'like_num',
+            'dislike_num',
+            'review_author__username',
+        )
         product_eval = define_product_eval(product_review)
         new_context = {'product_features': product_features,
                        'product_images': product_images,
@@ -334,8 +370,11 @@ class SearchResultView(DataMixin, ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
-        return Product.objects.filter(name__icontains=query).select_related(
-            'productimage'
+        return Product.objects.filter(name__icontains=query).only(
+            'name',
+            'price',
+        ).prefetch_related(
+            'productimage_set'
         ).order_by('access_number').reverse()[:100]
 
     def get_context_data(self, *, object_list=None, **kwargs):
