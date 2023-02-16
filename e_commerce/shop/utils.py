@@ -6,12 +6,11 @@ from django.contrib.auth.backends import ModelBackend, UserModel
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import MultipleObjectsReturned
-from django.db.models import Q, F, QuerySet, Prefetch
+from django.db.models import Q, F, QuerySet
 from django.http import JsonResponse, QueryDict, HttpRequest, HttpResponseRedirect
 
 from .forms import CustomUserCreationForm, CheckoutForm
 from .models import (
-    SuperCategory,
     Category,
     Stock,
     Order,
@@ -487,7 +486,7 @@ def modify_like_with_response(
         Creates Like objects if not exists, modifies and saves like
         data. If Like objects exists for this author, nothing happens.
     """
-    if not Like.objects.filter(review=review, like_author=author):
+    if not Like.objects.filter(review=review, like_author=author).count():
         Like.objects.create(
             review=review, like_author=author, like=like, dislike=dislike
         )

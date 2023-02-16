@@ -1,21 +1,34 @@
-from typing import Union, Tuple
-
 from django.conf.global_settings import AUTH_USER_MODEL
-from django.contrib.auth.backends import UserModel
-from django.contrib.auth.models import User
-from django.db.models import QuerySet, Prefetch, Q
+from django.db.models import QuerySet, Prefetch, Subquery, OuterRef
 from django.http import QueryDict
 
-from .models import ProductFeature, Product, Order, Sale, OrderItem, ProductImage, Review, Buyer, SuperCategory, \
-    Category, Stock, Like
+from .models import (
+    ProductFeature,
+    Product,
+    Order,
+    Sale,
+    OrderItem,
+    ProductImage,
+    Review,
+    SuperCategory,
+    Category,
+)
 
 
 class ShopQuerySets:
     @staticmethod
     def get_product_queryset_for_shop_home_view() -> QuerySet:
-        return Product.objects.only('name', 'price').order_by(
+        return Product.objects.only('id', 'name', 'price').order_by(
             'access_number'
-        ).prefetch_related("productimage_set").reverse()[:100]
+        ).prefetch_related(
+            Prefetch(
+                "productimage_set",
+                queryset=ProductImage.objects.filter(id__in=Subquery(
+                    ProductImage.objects.filter(
+                        product=OuterRef('product_id')
+                    ).values_list('id', flat=True)[:1]
+                )),
+            )).reverse()[:100]
 
     @staticmethod
     def get_order_queryset_for_user_account_view(user: AUTH_USER_MODEL) -> QuerySet:
