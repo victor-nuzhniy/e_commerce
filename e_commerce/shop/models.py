@@ -303,10 +303,10 @@ def user_directory_path_3(instance, filename):
 class PageData(models.Model):
     page_name = models.CharField(max_length=50, verbose_name='Назва сторінки')
     slug = models.SlugField(unique=True, verbose_name='Назва сторінки англійською')
-    banner = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Баннер")
-    image_1 = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Зображення 1")
-    image_2 = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Зображення 2")
-    image_3 = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Зображення 3")
+    banner = models.ImageField(upload_to=user_directory_path_3, blank=True, verbose_name="Баннер")
+    image_1 = models.ImageField(upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 1")
+    image_2 = models.ImageField(upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 2")
+    image_3 = models.ImageField(upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 3")
     header_1 = models.CharField(max_length=255, blank=True, null=True, verbose_name='Заголовок 1')
     header_2 = models.CharField(max_length=255, blank=True, null=True, verbose_name='Заголовок 2')
     header_3 = models.CharField(max_length=255, blank=True, null=True, verbose_name='Заголовок 3')
@@ -314,3 +314,9 @@ class PageData(models.Model):
     text_2 = models.TextField(blank=True, null=True, verbose_name="Текстове поле 2")
     text_3 = models.TextField(blank=True, null=True, verbose_name="Текстове поле 3")
 
+    def __str__(self):
+        return self.page_name
+
+    class Meta:
+        verbose_name = "Дані сторінки"
+        verbose_name_plural = "Дані сторінки"

@@ -260,6 +260,11 @@ class CategoryFeaturesAdmin(admin.ModelAdmin):
     list_display = ('category', 'feature_name',)
 
 
+class PageDataAdmin(admin.ModelAdmin):
+    list_display = ('page_name',)
+    prepopulated_fields = {'slug': ('page_name',)}
+
+
 # class ProductFeatureAdmin(admin.ModelAdmin):
 #     list_display = ['id', 'product']
 #     actions = [duplicate_query_sets_1]
@@ -286,5 +291,6 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem, OrderItemAdmin)
 admin.site.register(Stock, StockAdmin)
 admin.site.register(CategoryFeatures, CategoryFeaturesAdmin)
+admin.site.register(PageData, PageDataAdmin)
 # admin.site.register(ProductFeature, ProductFeatureAdmin)
 # admin.site.register(ProductImage, ProductImageAdmin)
