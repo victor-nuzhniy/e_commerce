@@ -92,20 +92,26 @@ class ShopHome(DataMixin, ListView):
         return context
 
 
-class RegisterUser(CreateView):
+class RegisterUser(DataMixin, CreateView):
     form_class = CustomUserCreationForm
     template_name = 'registration/register.html'
     extra_context = {'title': "Реєстрація"}
 
     def form_valid(self, form):
         user = form.save()
-        Buyer.objects.create(user=user, name=user.username, email=user.email)
+        buyer = Buyer.objects.create(user=user, name=user.username, email=user.email)
+        print('buyer', buyer)
         login(self.request, user)
         response = HttpResponseRedirect(reverse('shop:home'))
         return cart_authorization_handler(self.request, response, user)
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_user_context())
+        return context
 
-class ModLoginView(LoginView):
+
+class ModLoginView(DataMixin, LoginView):
     redirect_authenticated_user = True
     template_name = 'shop/register/login.html'
     next_page = 'shop:home'
@@ -117,8 +123,13 @@ class ModLoginView(LoginView):
         response = HttpResponseRedirect(self.get_success_url())
         return cart_authorization_handler(self.request, response, user)
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_user_context())
+        return context
 
-class AdminLoginView(LoginView):
+
+class AdminLoginView(DataMixin, LoginView):
     template_name = 'shop/register/login.html'
 
     def form_valid(self, form):
@@ -131,11 +142,21 @@ class AdminLoginView(LoginView):
             response.delete_cookie('cart')
         return response
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_user_context())
+        return context
+
 
 class ModPasswordChangeView(DataMixin, PasswordChangeView):
     success_url = 'shop:home'
     template_name = 'shop/register/password_change_form.html'
     extra_context = {'title': "Зміна паролю"}
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_user_context())
+        return context
 
 
 class ModPasswordResetView(DataMixin, PasswordResetView):
