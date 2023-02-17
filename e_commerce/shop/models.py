@@ -135,7 +135,7 @@ class ProductFeature(models.Model):
 
 
 def user_directory_path(instance, filename):
-    return 'product _{0}/{1}'.format(instance.product.slug, filename)
+    return 'product_{0}/{1}'.format(instance.product.slug, filename)
 
 
 class ProductImage(models.Model):
@@ -294,4 +294,23 @@ class Stock(models.Model):
     def get_price_total(self):
         total = self.quantity * self.price
         return total
+
+
+def user_directory_path_3(instance, filename):
+    return 'page_{0}/{1}'.format(instance.slug, filename)
+
+
+class PageData(models.Model):
+    page_name = models.CharField(max_length=50, verbose_name='Назва сторінки')
+    slug = models.SlugField(unique=True, verbose_name='Назва сторінки англійською')
+    banner = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Баннер")
+    image_1 = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Зображення 1")
+    image_2 = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Зображення 2")
+    image_3 = models.ImageField(upload_to=user_directory_path, blank=True, verbose_name="Зображення 3")
+    header_1 = models.CharField(max_length=255, verbose_name='Заголовок 1')
+    header_2 = models.CharField(max_length=255, verbose_name='Заголовок 2')
+    header_3 = models.CharField(max_length=255, verbose_name='Заголовок 3')
+    text_1 = models.TextField(verbose_name="Текстове поле 1")
+    text_2 = models.TextField(verbose_name="Текстове поле 2")
+    text_3 = models.TextField(verbose_name="Текстове поле 3")
 
