@@ -14,7 +14,6 @@ urlpatterns = [
     path('accounts/password_reset/done/', ModPasswordResetDoneView.as_view(), name='password_reset_done'),
     path('accounts/reset/<uidb64>/<token>/', ModPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('accounts/reset/done', ModPasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    path('accounts/change/<int:pk>/', UserChangeAccount.as_view(), name='change_user_account'),
     path('accounts/<int:pk>', UserAccount.as_view(), name='user_account'),
     path('category/<slug:category_slug>/', CategoryView.as_view(), name='category'),
     path('super_category/<int:super_category_pk>/', SuperCategoryView.as_view(), name='super_category'),

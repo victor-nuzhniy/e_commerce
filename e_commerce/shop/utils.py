@@ -318,7 +318,7 @@ def cart_authorization_handler(
     """
     cookie_cart = json.loads(request.COOKIES.get('cart'))
     if cookie_cart:
-        buyer = Buyer.objects.get_or_create(user=user)
+        buyer, created = Buyer.objects.get_or_create(user=user)
         order, created = Order.objects.get_or_create(buyer=buyer, complete=False)
         if not created:
             items = OrderItem.objects.filter(order=order)

@@ -199,28 +199,13 @@ class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
         })
         return context
 
-
-class UserChangeAccount(UserPassesTestMixin, UpdateView, ABC):
-    form_class = BuyerAccountForm
-    template_name = 'shop/account.html'
-    success_url = reverse_lazy('shop:home')
-
-    def test_func(self, **kwargs):
-        return self.request.user.id == self.kwargs['pk']
-
-    def get_queryset(self):
-        return User.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        new_context = {'title': "Кабінет покупця", 'pk': self.kwargs['pk']}
-        context.update(new_context)
-        return context
-
     def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return HttpResponseRedirect(reverse('shop:home'))
+        buyer, data = self.request.user.buyer, form.cleaned_data
+        buyer.name, buyer.email = data.get('name'), data.get('email')
+        buyer.tel, buyer.address = data.get('tel'), data.get('address')
+        self.request.user.buyer.save()
+        print(form.cleaned_data, self.request.user, self.request.user.id)
+        return super().form_valid(form)
 
 
 class CategoryView(DataMixin, ListView):
