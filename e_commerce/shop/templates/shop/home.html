@@ -6,8 +6,9 @@
 {% include 'shop/samples/right_bar.html' %}
     <div class="main-info">
         <div class="title">{{ title }}</div>
-        <img class="banner" src="{% static 'shop/images/banner_note.jpg' %}">
-    {% include 'shop/samples/product_list.html' %}
+        {% include 'shop/samples/page_data_top.html' %}
+        {% include 'shop/samples/product_list.html' %}
+        {% include 'shop/samples/page_data_bottom.html' %}
     </div>
     {{ cartJson|json_script:"cartJson" }}
     <script type="text/javascript" src="{%static 'shop/js/addCookieCart.js' %}"></script>

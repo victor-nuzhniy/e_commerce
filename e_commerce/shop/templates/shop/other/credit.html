@@ -7,14 +7,8 @@
     {% include 'shop/samples/right_bar_small.html' %}
     </div>
     <div class="main-info">
-        <h1>{% translate "Банки партнеры" %}</h1>
-        <img src="{% static 'shop/images/privatbank.png' %}" style="margin:20px" width="200" height="120">
-        <img src="{% static 'shop/images/a_bank.png' %}" style="margin:20px" width="200" height="120">
-        <img src="{% static 'shop/images/alpha_bank.png' %}" style="margin:20px" width="200" height="120">
-        <img src="{% static 'shop/images/monobank.png' %}" style="margin:20px" width="200" height="120">
-        <img src="{% static 'shop/images/otp_bank.png' %}" style="margin:20px" width="200" height="120">
-        <img src="{% static 'shop/images/pumb_bank.png' %}" style="margin:20px" width="200" height="120">
-
+        {% include 'shop/samples/page_data_top.html' %}
+        {% include 'shop/samples/page_data_bottom.html' %}
     </div>
 
 {% endblock %}

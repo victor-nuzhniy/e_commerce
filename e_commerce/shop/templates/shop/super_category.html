@@ -16,7 +16,7 @@
 
     <div class="main-info">
         <div class="title">{{ title }}</div>
-        <img class="banner" src="{% static 'shop/images/banner_note.jpg' %}">
+        {% include 'shop/samples/page_data_top.html' %}
         <div class="main-info-content">
             {% for category in categories %}
                 <a href="{{ category.get_absolute_url }}">
@@ -28,7 +28,7 @@
             {% endfor %}
         </div>
         {% include 'shop/samples/paginator.html' %}
-
+        {% include 'shop/samples/page_data_bottom.html' %}
     </div>
     </div>
 

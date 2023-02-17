@@ -20,8 +20,7 @@
         {% endif %}
     <div class="main-info">
         <div class="title">{{ title }}</div>
-        <img class="banner" src="{% static 'shop/images/banner_note.jpg' %}">
-
+        {% include 'shop/samples/page_data_top.html' %}
 
         <div class="filter-category">
             <div class="menu-down">
@@ -47,6 +46,7 @@
         </div>
 
         {% include 'shop/samples/product_list.html' %}
+        {% include 'shop/samples/page_data_bottom.html' %}
     </div>
 
     </div>

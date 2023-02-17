@@ -167,6 +167,35 @@ html, body {
     justify-content: space-between;
     margin-top: 10px;
 }
+/* page data */
+.page-data {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.page-data-header {
+}
+.banner {
+    max-width: 70vw;
+    max-height: 50vh;
+}
+.page-data-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.page-data-text {
+    width: 70%;
+}
+.page-data-image {
+    max-width: 300px;
+    max-height: 300px;
+    width: 30%;
+    height: auto;
+    margin: 10px;
+}
+/* end page data */
 /* Content classes */
 .content {
     display: flex;
@@ -353,9 +382,6 @@ html, body {
     flex-direction: row;
     width: 97%;
     margin-top: 5px;
-}
-.banner {
-    width: 70vw;
 }
 .navigation a, div {
     display: flex;

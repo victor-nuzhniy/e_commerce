@@ -7,11 +7,6 @@
         {% include 'shop/samples/right_bar_small.html' %}
     </div>
     <div class="main-info">
-        <h1>{% translate "Консультации и заказ по телефонам" %}</h1>
-        <h3>{% translate "По техническим причинам линии поддержки не работают. Заказывайте онлайн." %}</h3>
-        <p>{% translate "В связи с продлением комендантского часа в городах Одесса и Запорожье, фактический график работы магазина может быть отличаться от указанного." %}</p>
-        <img class="banner" src="{% static 'shop/images/banner_1.jpg' %}">
-        <h3>{% translate "Наша цель — быть полезными" %}</h3>
-    </div>
-
+        {% include 'shop/samples/page_data_top.html' %}
+        {% include 'shop/samples/page_data_bottom.html' %}
 {% endblock %}
