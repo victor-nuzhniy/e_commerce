@@ -262,7 +262,6 @@ class CategoryFeaturesAdmin(admin.ModelAdmin):
 
 class PageDataAdmin(admin.ModelAdmin):
     list_display = ('page_name',)
-    prepopulated_fields = {'slug': ('page_name',)}
 
 
 # class ProductFeatureAdmin(admin.ModelAdmin):

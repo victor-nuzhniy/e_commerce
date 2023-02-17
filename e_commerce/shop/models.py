@@ -297,12 +297,11 @@ class Stock(models.Model):
 
 
 def user_directory_path_3(instance, filename):
-    return 'page_{0}/{1}'.format(instance.slug, filename)
+    return 'page_{0}/{1}'.format(instance.page_name, filename)
 
 
 class PageData(models.Model):
     page_name = models.CharField(max_length=50, verbose_name='Назва сторінки')
-    slug = models.SlugField(unique=True, verbose_name='Назва сторінки англійською')
     banner = models.ImageField(upload_to=user_directory_path_3, blank=True, verbose_name="Баннер")
     image_1 = models.ImageField(upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 1")
     image_2 = models.ImageField(upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 2")
