@@ -1,0 +1,27 @@
+{% load static %}
+{% load shop_tags %}
+
+{% if page_data %}
+<div class="page-data">
+
+    {% if page_data.header_3 %}
+        <div class="page-data-header">
+            <h3>{{ page_data.header_3 }}</h3>
+        </div>
+    {% endif %}
+
+    {% if page_data.text_3 or page_data.image_3 %}
+        <div class="page-data-section-1">
+            {% if page_data.text_3 %}
+                <div class="page-data-text">
+                    {{ page_data.text_3 }}
+                </div>
+            {% endif %}
+            {% if page_data.image_3 %}
+                <img class="page-data-image" src="{{ page_data.image_3.url }}">
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+{% endif %}

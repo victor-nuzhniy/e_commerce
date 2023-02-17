@@ -31,7 +31,7 @@ from .forms import (
     PriceFilterForm,
     CheckoutForm,
 )
-from .models import Product, Category, Buyer, Review
+from .models import Product, Category, Buyer, Review, PageData
 from .utils import (
     DataMixin,
     check_quantity_in_stock,
@@ -80,12 +80,14 @@ class ShopHome(DataMixin, ListView):
         page_range = define_page_range(context)
         flag = self.request.COOKIES.get('flag')
         cart = define_cart(flag, self.request.user)
+        page_data = PageData.objects.filter(page_name='home').first()
         context.update({
             **self.get_user_context(title='АМУНІЦІЯ ДЛЯ СВОЇХ'),
             'page_range': page_range,
             'super_category_flag': True,
             'cartJson': json.dumps(cart),
             'flag': flag,
+            'page_data': page_data,
         })
         return context
 
@@ -204,7 +206,6 @@ class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
         buyer.name, buyer.email = data.get('name'), data.get('email')
         buyer.tel, buyer.address = data.get('tel'), data.get('address')
         self.request.user.buyer.save()
-        print(form.cleaned_data, self.request.user, self.request.user.id)
         return super().form_valid(form)
 
 
