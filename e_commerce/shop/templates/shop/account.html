@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="account-main">
-<form method="post" class="user-account-form">
+<form method="post" action="" class="user-account-form">
     {% csrf_token %}
     {{ form.as_p }}
     <div style="display:flex; flex-direction:row; justify-content:space-around">

@@ -51,7 +51,7 @@
                 <div class="price">
                     <div class="title">{{ product.price }} грн</div>
                     <button data-product="{{ product.id }}" data-action="add" data-sold="{{ product.sold }}" class="product-basket-button">
-                        <img src="{% static 'shop/images/white_basket.png' %}" width="30" height="30">
+                        <img src="{% static 'shop/images/white_basket.png' %}" class="product-basket-button-img">
                         Купити
                     </button>
                 </div>
@@ -107,7 +107,7 @@
                         <input type="hidden" name="review_author" value="{{ user.id }}">
                         <input type="hidden" name="product" value="{{ product.id }}">
                         <div class="form-errors">{{ review_form.review_text.errors }}</div>
-                        <input class="product-basket-button" style="margin:3px; font-size:18px" type="submit" value="Зберегти">
+                        <input class="product-basket-button" type="submit" value="Зберегти">
                     </form>
                     {% else %}
                         <div class="price" style="width:100%; max-width:600px">

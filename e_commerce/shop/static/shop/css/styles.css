@@ -497,6 +497,10 @@ html, body {
     margin-top: 10px;
     cursor: pointer;
 }
+.product-basket-button-img {
+    width: 30px;
+    height: 30px;
+}
 /* review */
 .review {
     display: flex;
@@ -1005,7 +1009,7 @@ $rad: 8px;
 }
 /* product */
 .product-info-features-elem {
-    height: 60px;
+    height: 40px;
     width: 200px;
 }
 .product-main-photo {
@@ -1017,6 +1021,7 @@ $rad: 8px;
     height: 30px;
     border-radius: 5px;
     font-size: 14px;
+    margin-top: 5px;
 }
 .availability {
     width: 100px;
@@ -1100,11 +1105,11 @@ $rad: 8px;
 
 /* product */
 .product-info-features-elem {
-    height: 100px;
+    height: 60px;
     width: 150px;
 }
 .title {
-    font-size: 18px;
+    font-size: 12px;
 }
 .navigation a, div {
     font-size: 10px;
@@ -1113,6 +1118,17 @@ $rad: 8px;
 /* account page */
 .user-account-form {
     width: 300px;
+}
+.product-basket-button {
+    width: 70px;
+    height: 20px;
+    border-radius: 3px;
+    font-size: 8px;
+    margin-top: 2px;
+}
+.product-basket-button-img {
+    width: 20px;
+    height: 20px;
 }
 .account-order-label {
     display: none;
