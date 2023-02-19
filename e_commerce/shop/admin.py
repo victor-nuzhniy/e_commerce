@@ -51,7 +51,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'model', 'brand', 'category', 'sold')
     list_display_links = ('id', 'name')
     search_fields = ('name',)
-    search_help_text = _('Поиск по наименованию товара')
+    search_help_text = _('Пошук за назвою товару')
     list_editable = ('sold',)
     list_filter = ('brand', 'category', 'sold',)
     list_per_page = 20
@@ -74,7 +74,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'super_category')
     list_display_links = ('id', 'name')
     search_fields = ('name',)
-    search_help_text = _('Поиск по имени категории')
+    search_help_text = _('Пошук за назвою категорії')
     list_filter = ('super_category__name',)
     prepopulated_fields = {'slug': ('name',)}
     inlines = [
@@ -118,11 +118,12 @@ class UserAdmin(BaseUserAdmin):
 class StockAdmin(admin.ModelAdmin):
     list_display = ['product', 'quantity', 'price', 'summ', 'income', 'supplier']
     readonly_fields = ['product', 'quantity', 'income', 'price', 'supplier']
-    list_filter = ['supplier']
+    list_filter = ['supplier', 'product']
     search_fields = ['product__name']
-    search_help_text = _('Поиск по наименованию товара')
+    search_help_text = _('Пошук за назвою товару')
     list_per_page = 20
     list_select_related = ['product', 'income', 'supplier']
+    actions = None
 
     @admin.display(description=_('Сумма'))
     def summ(self, obj):
@@ -132,7 +133,7 @@ class StockAdmin(admin.ModelAdmin):
 class IncomeAdmin(admin.ModelAdmin):
     list_display = ['income_date', 'product', 'income_quantity', 'supplier']
     search_fields = ('product__name', 'income_date')
-    search_help_text = _('Поиск по наименованию товара и дате прихода')
+    search_help_text = _('Пошук за назвою товару і датою приходу')
     list_filter = ['supplier']
     list_per_page = 20
     list_select_related = ['product', 'supplier']
@@ -162,15 +163,15 @@ class SaleAdmin(admin.ModelAdmin):
     readonly_fields = ['order']
     list_display = ['sale_date', 'sold_product', 'sale_buyer']
     search_fields = ['sale_date']
-    search_help_text = _('Поиск по дате продажи')
+    search_help_text = _('Пошук за датою продажу')
     list_per_page = 20
     list_select_related = ['order', 'order__buyer']
 
-    @admin.display(description=_('Проданный товар'))
+    @admin.display(description=_('Проданий товар'))
     def sold_product(self, obj):
         return list(obj.order.orderitem_set.all())
 
-    @admin.display(description=_('Покупатель'))
+    @admin.display(description=_('Покупець'))
     def sale_buyer(self, obj):
         return obj.order.buyer
 
@@ -195,7 +196,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'buyer', 'date_ordered', 'complete', 'get_order_items', 'get_order_total']
     list_display_links = ['id', 'buyer']
     search_fields = ['date_ordered', 'buyer__user__username', 'buyer__user__first_name', 'buyer__user__last_name']
-    search_help_text = _('Поиск по дате заказа, нику, имени и фамилии пользователя')
+    search_help_text = _('Пошук за датою замовлення, юзернейму, імені та фамілії користувача')
     list_per_page = 20
     list_select_related = ['buyer', 'buyer__user']
 
@@ -207,11 +208,11 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_display = ['order_id', 'order', 'product', 'quantity', 'get_total']
     list_display_links = ['order_id', 'order']
     search_fields = ['order__date_ordered', 'product__name']
-    search_help_text = _('Поиск по дате заказа и наименованию товара')
+    search_help_text = _('Пошук за назвою замовлення і назвою товару')
     list_per_page = 20
     list_select_related = ['product', 'order']
 
-    @admin.display(description=_('Порядковый номер заказа'))
+    @admin.display(description=_('Порядковий номер замовлення'))
     def order_id(self, obj):
         return obj.order.id
 
@@ -219,15 +220,15 @@ class OrderItemAdmin(admin.ModelAdmin):
 class LikeAdmin(admin.ModelAdmin):
     list_display = ['review_product', 'review_author', 'like_author', 'like', 'dislike']
     search_fields = ['review__product__name', 'review__review_author__username']
-    search_help_text = _('Поиск по наименованию продукта, автору отзыва')
+    search_help_text = _('Пошук за назвою товара, юзернейму автора відгуку')
     list_per_page = 20
     list_select_related = ['review__review_author', 'review__product', 'like_author']
 
-    @admin.display(description=_('Автор отзыва'))
+    @admin.display(description=_('Автор відгука'))
     def review_author(self, obj):
         return obj.review.review_author
 
-    @admin.display(description=_('Оцениваемый товар'))
+    @admin.display(description=_('Товар, що оцінюється'))
     def review_product(self, obj):
         return obj.review.product
 
@@ -236,7 +237,7 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ['review_date', 'product', 'grade', 'review_author']
     list_filter = ['grade']
     search_fields = ['review_date', 'product__name', 'review_author__username']
-    search_help_text = _('Поиск по дате отзыва, наименованию товара, юзернейму автора')
+    search_help_text = _('Пошук за датою відгуку, найменуванню товару, юзернейму автора')
     list_per_page = 20
     list_select_related = ['product', 'review_author']
 
@@ -244,7 +245,7 @@ class ReviewAdmin(admin.ModelAdmin):
 class SupplierAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'person', 'tel', 'email']
     search_fields = ['name']
-    search_help_text = _('Поиск по наименованию предприятия')
+    search_help_text = _('Пошук за назвою підприємства')
     list_per_page = 20
 
 
