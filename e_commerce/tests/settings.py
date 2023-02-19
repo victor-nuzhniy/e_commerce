@@ -20,6 +20,8 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+print(BASE_DIR, 'BASE_DIR', 11111)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -82,7 +84,7 @@ WSGI_APPLICATION = "e_commerce.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": str(os.getenv("POSTGRES_DB")),
+        "NAME": str(os.getenv("TEST_POSTGRES_DB")),
         "USER": str(os.getenv("POSTGRES_USER")),
         "PASSWORD": str(os.getenv("POSTGRES_PASSWORD")),
         "HOST": str(os.getenv("POSTGRES_HOST")),

@@ -43,6 +43,7 @@ httpx = "^0.23.0"
 factory-boy = "^3.2.1"
 pytest-freezegun = "^0.4.2"
 pytest-django = "^4.5.2"
+pytz = "^2022.7.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -76,7 +77,9 @@ skip_glob = []
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = tests.settings
+# === Pytest ===
+DJANGO_SETTINGS_MODULE = "tests.settings"
+pythonpath = [".", " e_commerce"]
 norecursedirs = ["venv", ".venv", ".env", "migrations"]
 testpaths = ["tests",]
 console_output_style = "progress"
@@ -86,12 +89,4 @@ python_functions = "test_*"
 asyncio_mode = "auto"
 
 # === Pytest ===
-[tool.pytest.ini_options]
-norecursedirs = ["venv", ".venv", ".env", "migrations"]
-testpaths = ["tests",]
-console_output_style = "progress"
-python_files = "test_*"
-python_classes = "Test*"
-python_functions = "test_*"
-pytest_alembic_tests_folder = "tests/alembic"
-asyncio_mode = "auto"
+
