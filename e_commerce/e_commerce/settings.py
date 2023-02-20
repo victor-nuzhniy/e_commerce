@@ -138,7 +138,11 @@ DECIMAL_SEPARATOR = "."
 
 STATIC_URL = "static/"
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = [
+    BASE_DIR.joinpath('static')
+]
+
+STATIC_ROOT = '/var/www/victordmn/static'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
