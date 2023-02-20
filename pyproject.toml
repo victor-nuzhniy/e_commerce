@@ -44,6 +44,7 @@ factory-boy = "^3.2.1"
 pytest-freezegun = "^0.4.2"
 pytest-django = "^4.5.2"
 pytz = "^2022.7.1"
+python-slugify = "^8.0.0"
 
 [build-system]
 requires = ["poetry-core"]
