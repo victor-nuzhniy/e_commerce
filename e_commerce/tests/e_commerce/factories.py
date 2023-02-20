@@ -5,6 +5,7 @@ from shop.models import (
     SuperCategory,
     Category,
     CategoryFeatures,
+    Brand,
 )
 from tests.bases import BaseModelFactory
 
@@ -27,9 +28,8 @@ class CategoryFactory(BaseModelFactory):
     class Meta:
         model = Category
         django_get_or_create = ('slug', 'super_category')
-        exclude = ('category_feature_set', 'seq')
+        exclude = ('category_feature_set',)
 
-    seq = factory.Sequence(lambda x: x)
     name = factory.Faker('pystr', min_chars=1, max_chars=100)
     slug = factory.LazyAttribute(function=lambda obj: slugify(str(obj.name)))
     super_category = factory.SubFactory(factory=SuperCategoryFactory)
@@ -50,3 +50,13 @@ class CategoryFeatureFactory(BaseModelFactory):
     feature_name = factory.Faker('pystr', min_chars=1, max_chars=100)
 
 
+class BrandFactory(BaseModelFactory):
+    class Meta:
+        model = Brand
+        django_get_or_create = ('slug',)
+
+    name = factory.Faker('pystr', min_chars=1, max_chars=100)
+    slug = factory.LazyAttribute(function=lambda obj: slugify(str(obj.name)))
+
+
+class
