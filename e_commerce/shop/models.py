@@ -11,7 +11,10 @@ def user_directory_path_1(instance, filename):
 class SuperCategory(models.Model):
     name = models.CharField(max_length=50, verbose_name="Загальна категорія")
     icon = models.ImageField(
-        upload_to=user_directory_path_1, blank=True, verbose_name="Іконка"
+        upload_to=user_directory_path_1,
+        blank=True,
+        verbose_name="Іконка",
+        max_length=200,
     )
 
     def __str__(self):
@@ -31,9 +34,11 @@ def user_directory_path_2(instance, filename):
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Категорія")
-    slug = models.SlugField(unique=True, verbose_name="URL")
+    slug = models.SlugField(unique=True, max_length=100, verbose_name="URL")
     super_category = models.ForeignKey(SuperCategory, on_delete=models.CASCADE)
-    icon = models.ImageField(upload_to=user_directory_path_2, blank=True, null=True)
+    icon = models.ImageField(
+        upload_to=user_directory_path_2, blank=True, null=True, max_length=200
+    )
 
     def __str__(self):
         return self.name
@@ -62,7 +67,7 @@ class CategoryFeatures(models.Model):
 
 class Brand(models.Model):
     name = models.CharField(max_length=100, verbose_name="Найменування бренда")
-    slug = models.SlugField(unique=True, verbose_name="URL")
+    slug = models.SlugField(unique=True, max_length=100, verbose_name="URL")
 
     def __str__(self):
         return self.name
@@ -161,7 +166,10 @@ def user_directory_path(instance, filename):
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Товар")
     image = models.ImageField(
-        upload_to=user_directory_path, blank=True, verbose_name="Зображення"
+        upload_to=user_directory_path,
+        blank=True,
+        verbose_name="Зображення",
+        max_length=200,
     )
 
     def __str__(self):
@@ -390,7 +398,10 @@ def user_directory_path_3(instance, filename):
 class PageData(models.Model):
     page_name = models.CharField(max_length=50, verbose_name="Назва сторінки")
     banner = models.ImageField(
-        upload_to=user_directory_path_3, blank=True, verbose_name="Баннер"
+        upload_to=user_directory_path_3,
+        blank=True,
+        verbose_name="Баннер",
+        max_length=200,
     )
     image_1 = models.ImageField(
         upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 1"
