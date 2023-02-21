@@ -55,7 +55,7 @@ class ShopQuerySets:
                     queryset=Product.objects.only("name", "price"),
                 ),
             )
-            .order_by("date_ordered")
+            .order_by("ordered_at")
             .reverse()
         )
 

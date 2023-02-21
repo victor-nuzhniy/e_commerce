@@ -1,8 +1,6 @@
-import re
 from abc import ABC
 
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.forms import Widget, forms, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from .models import *
@@ -30,27 +28,6 @@ class ProductImageInline(admin.StackedInline):
     extra = 1
 
 
-# @admin.action(description='Copy item')
-# def duplicate_query_sets(modeladmin, request, queryset, **kwargs):
-#     for p in queryset:
-#         p.pk = None
-#         p.slug = '1'
-#         for i, v in kwargs.items():
-#             setattr(p, i, v)
-#         p.save()
-#
-#
-# @admin.action(description='Copy p and i item')
-# def duplicate_query_sets_1(modeladmin, request, queryset, **kwargs):
-#     for p in queryset:
-#         p.pk = None
-#         product = Product.objects.get(id=p.product.id+1)
-#         p.product = product
-#         for i, v in kwargs.items():
-#             setattr(p, i, v)
-#         p.save()
-
-
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "model", "brand", "category", "sold")
     list_display_links = ("id", "name")
@@ -69,8 +46,6 @@ class ProductAdmin(admin.ModelAdmin):
         ProductImageInline,
     ]
     list_select_related = ["brand", "category"]
-
-    # actions = [duplicate_query_sets]
 
 
 class CategoryFeatureInline(admin.StackedInline):
@@ -98,18 +73,18 @@ class BuyerInline(admin.StackedInline):
 
 
 class BuyerListFilter(admin.SimpleListFilter, ABC):
-    title = _("Покупатель")
+    title = _("Покупець")
     parameter_name = "buyer"
 
     def lookups(self, request, model_admin):
-        return ("Да", _("Да")), ("Нет", _("Нет"))
+        return ("Так", _("Так")), ("Ні", _("Ні"))
 
     def queryset(self, request, queryset):
         buyers = Buyer.objects.all()
         buyers_set = {buyer.user_id for buyer in buyers}
-        if self.value() == "Да":
+        if self.value() == "Так":
             return queryset.filter(id__in=buyers_set)
-        elif self.value() == "Нет":
+        elif self.value() == "Ні":
             return queryset.exclude(id__in=buyers_set)
 
 
@@ -136,7 +111,7 @@ class StockAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-    @admin.display(description=_("Сумма"))
+    @admin.display(description=_("Сума"))
     def summ(self, obj):
         return obj.price * obj.quantity
 
@@ -192,16 +167,14 @@ class SaleAdmin(admin.ModelAdmin):
         return obj.order.buyer
 
     def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .prefetch_related("order__orderitem_set", "order__orderitem_set__product")
+        return super().get_queryset(request).prefetch_related(
+            "order__orderitem_set", "order__orderitem_set__product"
         )
 
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    readonly_fields = ["product", "order", "quantity", "date_added", "get_total"]
+    readonly_fields = ["product", "order", "quantity", "added_at", "get_total"]
     extra = 0
 
 
@@ -216,14 +189,14 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "buyer",
-        "date_ordered",
+        "ordered_at",
         "complete",
         "get_order_items",
         "get_order_total",
     ]
     list_display_links = ["id", "buyer"]
     search_fields = [
-        "date_ordered",
+        "ordered_at",
         "buyer__user__username",
         "buyer__user__first_name",
         "buyer__user__last_name",
@@ -235,17 +208,15 @@ class OrderAdmin(admin.ModelAdmin):
     list_select_related = ["buyer", "buyer__user"]
 
     def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .prefetch_related("orderitem_set", "orderitem_set__product")
+        return super().get_queryset(request).prefetch_related(
+            "orderitem_set", "orderitem_set__product"
         )
 
 
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ["order_id", "order", "product", "quantity", "get_total"]
     list_display_links = ["order_id", "order"]
-    search_fields = ["order__date_ordered", "product__name"]
+    search_fields = ["order__ordered_at", "product__name"]
     search_help_text = _("Пошук за назвою замовлення і назвою товару")
     list_per_page = 20
     list_select_related = ["product", "order"]
@@ -298,24 +269,11 @@ class SuperCategoryAdmin(admin.ModelAdmin):
 
 
 class CategoryFeaturesAdmin(admin.ModelAdmin):
-    list_display = (
-        "category",
-        "feature_name",
-    )
+    list_display = ("category", "feature_name")
 
 
 class PageDataAdmin(admin.ModelAdmin):
     list_display = ("page_name",)
-
-
-# class ProductFeatureAdmin(admin.ModelAdmin):
-#     list_display = ['id', 'product']
-#     actions = [duplicate_query_sets_1]
-#
-#
-# class ProductImageAdmin(admin.ModelAdmin):
-#     list_display = ['id', 'product']
-#     actions = [duplicate_query_sets_1]
 
 
 admin.site.unregister(User)

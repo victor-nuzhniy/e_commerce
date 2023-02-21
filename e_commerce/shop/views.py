@@ -102,7 +102,6 @@ class RegisterUser(DataMixin, CreateView):
     def form_valid(self, form):
         user = form.save()
         buyer = Buyer.objects.create(user=user, name=user.username, email=user.email)
-        print("buyer", buyer)
         login(self.request, user)
         response = HttpResponseRedirect(reverse("shop:home"))
         return cart_authorization_handler(self.request, response, user)
