@@ -4,9 +4,9 @@ import typing
 from typing import Any, Dict, List, Type
 
 import factory
+from django.db import models
 from pydantic_factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
 from pytz import utc
-from django.db import models
 
 
 class BaseModelFactory(factory.django.DjangoModelFactory):
@@ -26,4 +26,3 @@ class BaseModelFactory(factory.django.DjangoModelFactory):
         assert size == len(objs)
         for i in objs:
             assert isinstance(i, model)
-

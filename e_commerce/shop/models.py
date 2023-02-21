@@ -283,9 +283,7 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Замовлення",
     )
-    ordered_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата замовлення"
-    )
+    ordered_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата замовлення")
     complete = models.BooleanField(default=False, verbose_name="Виконання")
 
     class Meta:
