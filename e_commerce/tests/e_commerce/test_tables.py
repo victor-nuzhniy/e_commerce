@@ -242,7 +242,7 @@ class TestOrder:
 
     def test__str__(self) -> None:
         obj: Order = OrderFactory()
-        expected_result = str(obj.date_ordered)
+        expected_result = str(obj.ordered_at)
         assert expected_result == obj.__str__()
 
 

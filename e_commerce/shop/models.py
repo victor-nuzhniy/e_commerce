@@ -92,7 +92,7 @@ class Supplier(models.Model):
     tel = models.CharField(max_length=15, verbose_name="Телефон")
     email = models.EmailField(verbose_name="Електронна адреса")
     person = models.CharField(max_length=20, verbose_name="Контактна особа")
-    date_creation = models.DateField(
+    creation_date = models.DateField(
         auto_now_add=True, verbose_name="Дата внесення в базу"
     )
 
@@ -122,7 +122,7 @@ class Product(models.Model):
     notes = models.CharField(
         max_length=200, blank=True, verbose_name="Додаткова інформація"
     )
-    last_accessed = models.DateTimeField(
+    last_access_at = models.DateTimeField(
         blank=True, null=True, verbose_name="Дата останнього відвідування"
     )
     access_number = models.PositiveBigIntegerField(
@@ -283,7 +283,7 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Замовлення",
     )
-    date_ordered = models.DateTimeField(
+    ordered_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата замовлення"
     )
     complete = models.BooleanField(default=False, verbose_name="Виконання")
@@ -293,7 +293,7 @@ class Order(models.Model):
         verbose_name_plural = "Замовлення"
 
     def __str__(self):
-        return str(self.date_ordered)
+        return str(self.ordered_at)
 
     @property
     @admin.display(description="Загальна сума")
@@ -322,7 +322,7 @@ class OrderItem(models.Model):
         verbose_name="Замовлення",
     )
     quantity = models.IntegerField(default=0, verbose_name="Кількість")
-    date_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата додавання")
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата додавання")
 
     class Meta:
         verbose_name = "Замовлений товар"

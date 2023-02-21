@@ -105,7 +105,7 @@ class SupplierFactory(BaseModelFactory):
     tel = factory.Faker('pystr', max_chars=15)
     email = factory.Faker('email')
     person = factory.Faker('first_name')
-    date_creation = factory.Faker('date')
+    creation_date = factory.Faker('date')
     income_set = factory.RelatedFactoryList(
         factory='tests.e_commerce.factories.IncomeFactory',
         factory_related_name='income_set',
@@ -141,7 +141,7 @@ class ProductFactory(BaseModelFactory):
     price = factory.Faker('pydecimal', left_digits=8, right_digits=2, positive=True)
     sold = factory.Faker('pybool')
     notes = factory.Faker('pystr', max_chars=200)
-    last_accessed = factory.Faker('date_time', tzinfo=utc)
+    last_accessed_at = factory.Faker('date_time', tzinfo=utc)
     access_number = factory.Faker('pyint')
     productfeature_set = factory.RelatedFactoryList(
         factory='tests.e_commerce.factories.ProductFeatureFactory',
@@ -300,7 +300,7 @@ class OrderFactory(BaseModelFactory):
         exclude = ('orderitem_set', 'sale_set')
 
     buyer = factory.SubFactory(factory=BuyerFactory)
-    date_ordered = factory.Faker('date_time', tzinfo=utc)
+    ordered_at = factory.Faker('date_time', tzinfo=utc)
     complete = factory.Faker('pybool')
     orderitem_set = factory.RelatedFactoryList(
         factory='tests.e_commerce.factories.OrderItemFactory',
@@ -322,7 +322,7 @@ class OrderItemFactory(BaseModelFactory):
     product = factory.SubFactory(factory=ProductFactory)
     order = factory.SubFactory(factory=OrderFactory)
     quantity = factory.Faker('pyint')
-    date_added = factory.Faker('date_time', tzinfo=utc)
+    added_at = factory.Faker('date_time', tzinfo=utc)
 
 
 class SaleFactory(BaseModelFactory):
