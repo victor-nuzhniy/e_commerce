@@ -1,45 +1,45 @@
 import tempfile
-from django.test import override_settings
-import pytest
 
+import pytest
+from django.test import override_settings
 from shop.models import (
-    SuperCategory,
+    Brand,
+    Buyer,
     Category,
     CategoryFeatures,
-    Brand,
-    Supplier,
+    Income,
+    Like,
+    Order,
+    OrderItem,
+    PageData,
     Product,
     ProductFeature,
     ProductImage,
     Review,
-    Like,
-    Income,
-    Buyer,
-    Order,
-    OrderItem,
     Sale,
     Stock,
-    PageData,
+    SuperCategory,
+    Supplier,
 )
 from tests.bases import BaseModelFactory
 from tests.e_commerce.factories import (
-    SuperCategoryFactory,
+    BrandFactory,
+    BuyerFactory,
     CategoryFactory,
     CategoryFeatureFactory,
-    BrandFactory,
-    SupplierFactory,
+    IncomeFactory,
+    LikeFactory,
+    OrderFactory,
+    OrderItemFactory,
+    PageDataFactory,
     ProductFactory,
     ProductFeatureFactory,
     ProductImageFactory,
     ReviewFactory,
-    LikeFactory,
-    IncomeFactory,
-    BuyerFactory,
-    OrderFactory,
-    OrderItemFactory,
     SaleFactory,
     StockFactory,
-    PageDataFactory,
+    SuperCategoryFactory,
+    SupplierFactory,
 )
 
 
@@ -66,9 +66,7 @@ class TestCategory:
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=CategoryFactory, model=Category
-        )
+        BaseModelFactory.check_factory(factory_class=CategoryFactory, model=Category)
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
@@ -98,9 +96,7 @@ class TestBrand:
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=BrandFactory, model=Brand
-        )
+        BaseModelFactory.check_factory(factory_class=BrandFactory, model=Brand)
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
@@ -114,9 +110,7 @@ class TestSupplier:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=SupplierFactory, model=Supplier
-        )
+        BaseModelFactory.check_factory(factory_class=SupplierFactory, model=Supplier)
 
     def test__str__(self) -> None:
         obj: Supplier = SupplierFactory()
@@ -129,9 +123,7 @@ class TestProduct:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=ProductFactory, model=Product
-        )
+        BaseModelFactory.check_factory(factory_class=ProductFactory, model=Product)
 
     def test__str__(self) -> None:
         obj: Product = ProductFactory()
@@ -176,9 +168,7 @@ class TestReview:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=ReviewFactory, model=Review
-        )
+        BaseModelFactory.check_factory(factory_class=ReviewFactory, model=Review)
 
     def test__str__(self) -> None:
         obj: Review = ReviewFactory()
@@ -191,9 +181,7 @@ class TestLike:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=LikeFactory, model=Like
-        )
+        BaseModelFactory.check_factory(factory_class=LikeFactory, model=Like)
 
     def test__str__(self) -> None:
         obj: Like = LikeFactory()
@@ -206,9 +194,7 @@ class TestIncome:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=IncomeFactory, model=Income
-        )
+        BaseModelFactory.check_factory(factory_class=IncomeFactory, model=Income)
 
     def test__str__(self) -> None:
         obj: Income = IncomeFactory()
@@ -221,9 +207,7 @@ class TestBuyer:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=BuyerFactory, model=Buyer
-        )
+        BaseModelFactory.check_factory(factory_class=BuyerFactory, model=Buyer)
 
     def test__str__(self) -> None:
         obj: Buyer = BuyerFactory()
@@ -236,9 +220,7 @@ class TestOrder:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=OrderFactory, model=Order
-        )
+        BaseModelFactory.check_factory(factory_class=OrderFactory, model=Order)
 
     def test__str__(self) -> None:
         obj: Order = OrderFactory()
@@ -251,9 +233,7 @@ class TestOrderItem:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=OrderItemFactory, model=OrderItem
-        )
+        BaseModelFactory.check_factory(factory_class=OrderItemFactory, model=OrderItem)
 
     def test__str__(self) -> None:
         obj: OrderItem = OrderItemFactory()
@@ -266,9 +246,7 @@ class TestSale:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=SaleFactory, model=Sale
-        )
+        BaseModelFactory.check_factory(factory_class=SaleFactory, model=Sale)
 
     def test__str__(self) -> None:
         obj: Sale = SaleFactory()
@@ -281,9 +259,7 @@ class TestStock:
     pytestmark = pytest.mark.django_db
 
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=StockFactory, model=Stock
-        )
+        BaseModelFactory.check_factory(factory_class=StockFactory, model=Stock)
 
     def test__str__(self) -> None:
         obj: Stock = StockFactory()
@@ -297,13 +273,10 @@ class TestPageData:
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(
-            factory_class=PageDataFactory, model=PageData
-        )
+        BaseModelFactory.check_factory(factory_class=PageDataFactory, model=PageData)
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
         obj: PageData = PageDataFactory()
         expected_result = obj.page_name
         assert expected_result == obj.__str__()
-

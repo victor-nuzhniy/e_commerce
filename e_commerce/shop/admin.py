@@ -2,8 +2,25 @@ from abc import ABC
 
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-
-from .models import *
+from shop.models import (
+    Brand,
+    Buyer,
+    Category,
+    CategoryFeatures,
+    Income,
+    Like,
+    Order,
+    OrderItem,
+    PageData,
+    Product,
+    ProductFeature,
+    ProductImage,
+    Review,
+    Sale,
+    Stock,
+    SuperCategory,
+    Supplier,
+)
 
 
 class ProductFeatureInline(admin.StackedInline):
@@ -167,8 +184,10 @@ class SaleAdmin(admin.ModelAdmin):
         return obj.order.buyer
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related(
-            "order__orderitem_set", "order__orderitem_set__product"
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related("order__orderitem_set", "order__orderitem_set__product")
         )
 
 
@@ -208,8 +227,10 @@ class OrderAdmin(admin.ModelAdmin):
     list_select_related = ["buyer", "buyer__user"]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related(
-            "orderitem_set", "orderitem_set__product"
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related("orderitem_set", "orderitem_set__product")
         )
 
 
