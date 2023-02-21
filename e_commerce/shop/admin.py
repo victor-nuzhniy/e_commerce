@@ -133,6 +133,9 @@ class StockAdmin(admin.ModelAdmin):
     list_select_related = ["product", "income", "supplier"]
     actions = None
 
+    def has_add_permission(self, request):
+        return False
+
     @admin.display(description=_("Сумма"))
     def summ(self, obj):
         return obj.price * obj.quantity

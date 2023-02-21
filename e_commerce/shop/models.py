@@ -118,7 +118,7 @@ class Product(models.Model):
     vendor_code = models.CharField(max_length=50, verbose_name="Артикул")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Ціна")
     supplier = models.ManyToManyField(Supplier, verbose_name="Постачальник")
-    sold = models.BooleanField(verbose_name="Проданий")
+    sold = models.BooleanField(default=True, verbose_name="Проданий")
     notes = models.CharField(
         max_length=200, blank=True, verbose_name="Додаткова інформація"
     )
@@ -280,7 +280,7 @@ class Order(models.Model):
         Buyer,
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         verbose_name="Замовлення",
     )
     date_ordered = models.DateTimeField(
@@ -312,13 +312,13 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     product = models.ForeignKey(
-        Product, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Товар"
+        Product, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Товар"
     )
     order = models.ForeignKey(
         Order,
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         verbose_name="Замовлення",
     )
     quantity = models.IntegerField(default=0, verbose_name="Кількість")
@@ -343,7 +343,7 @@ class Sale(models.Model):
         Order,
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         verbose_name="Замовлення",
     )
     sale_date = models.DateField(auto_now_add=True, verbose_name="Дата продажу")
@@ -404,13 +404,22 @@ class PageData(models.Model):
         max_length=200,
     )
     image_1 = models.ImageField(
-        upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 1"
+        upload_to=user_directory_path_3,
+        blank=True,
+        verbose_name="Зображення 1",
+        max_length=200,
     )
     image_2 = models.ImageField(
-        upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 2"
+        upload_to=user_directory_path_3,
+        blank=True,
+        verbose_name="Зображення 2",
+        max_length=200,
     )
     image_3 = models.ImageField(
-        upload_to=user_directory_path_3, blank=True, verbose_name="Зображення 3"
+        upload_to=user_directory_path_3,
+        blank=True,
+        verbose_name="Зображення 3",
+        max_length=200,
     )
     header_1 = models.CharField(
         max_length=255, blank=True, null=True, verbose_name="Заголовок 1"
