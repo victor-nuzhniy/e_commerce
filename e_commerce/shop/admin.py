@@ -1,7 +1,14 @@
+from __future__ import annotations
+
 from abc import ABC
+from typing import Any, Set, Tuple, List
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
+from django.db.models import QuerySet
+from django import forms
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from shop.models import (
     Brand,
@@ -22,6 +29,7 @@ from shop.models import (
     SuperCategory,
     Supplier,
 )
+from django.db import models
 
 
 class ProductFeatureInline(admin.StackedInline):
@@ -29,7 +37,9 @@ class ProductFeatureInline(admin.StackedInline):
     exclude = ("id",)
     extra = 1
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    def formfield_for_foreignkey(
+            self, db_field: models.ForeignKey, request: HttpRequest, **kwargs: Any
+    ) -> Set[ProductFeature]:
         if db_field.name == "feature_name" and (
             object_id := request.resolver_match.kwargs.get("object_id")
         ):
@@ -94,10 +104,10 @@ class BuyerListFilter(admin.SimpleListFilter, ABC):
     title = _("Покупець")
     parameter_name = "buyer"
 
-    def lookups(self, request, model_admin):
+    def lookups(self, request: HttpRequest, model_admin: BuyerAdmin) -> Tuple:
         return ("Так", _("Так")), ("Ні", _("Ні"))
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         buyers = Buyer.objects.all()
         buyers_set = {buyer.user_id for buyer in buyers}
         if self.value() == "Так":
@@ -126,11 +136,11 @@ class StockAdmin(admin.ModelAdmin):
     list_select_related = ["product", "income", "supplier"]
     actions = None
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request: HttpRequest) -> bool:
         return False
 
     @admin.display(description=_("Сума"))
-    def summ(self, obj):
+    def summ(self, obj: Stock) -> float:
         return obj.price * obj.quantity
 
 
@@ -142,7 +152,9 @@ class IncomeAdmin(admin.ModelAdmin):
     list_per_page = 20
     list_select_related = ["product", "supplier"]
 
-    def save_model(self, request, obj, form, change):
+    def save_model(
+            self, request: HttpRequest, obj: Income, form: forms.ModelForm, change: Any
+    ) -> None:
         stock, prev_quantity = Stock.objects.filter(income=obj), 0
         if stock:
             prev_quantity = Income.objects.get(id=obj.id).income_quantity
@@ -177,18 +189,16 @@ class SaleAdmin(admin.ModelAdmin):
     list_select_related = ["order", "order__buyer"]
 
     @admin.display(description=_("Проданий товар"))
-    def sold_product(self, obj):
+    def sold_product(self, obj: Sale) -> List[OrderItem]:
         return list(obj.order.orderitem_set.all())
 
     @admin.display(description=_("Покупець"))
-    def sale_buyer(self, obj):
+    def sale_buyer(self, obj: Sale) -> Buyer:
         return obj.order.buyer
 
-    def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .prefetch_related("order__orderitem_set", "order__orderitem_set__product")
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        return super().get_queryset(request).prefetch_related(
+            "order__orderitem_set", "order__orderitem_set__product"
         )
 
 
@@ -227,11 +237,9 @@ class OrderAdmin(admin.ModelAdmin):
     list_per_page = 20
     list_select_related = ["buyer", "buyer__user"]
 
-    def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .prefetch_related("orderitem_set", "orderitem_set__product")
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        return super().get_queryset(request).prefetch_related(
+            "orderitem_set", "orderitem_set__product"
         )
 
 
@@ -244,7 +252,7 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_select_related = ["product", "order"]
 
     @admin.display(description=_("Порядковий номер замовлення"))
-    def order_id(self, obj):
+    def order_id(self, obj: OrderItem) -> int:
         return obj.order.id
 
 
@@ -256,11 +264,11 @@ class LikeAdmin(admin.ModelAdmin):
     list_select_related = ["review__review_author", "review__product", "like_author"]
 
     @admin.display(description=_("Автор відгука"))
-    def review_author(self, obj):
+    def review_author(self, obj: Like) -> User:
         return obj.review.review_author
 
     @admin.display(description=_("Товар, що оцінюється"))
-    def review_product(self, obj):
+    def review_product(self, obj: Like) -> Product:
         return obj.review.product
 
 
@@ -292,7 +300,7 @@ class SuperCategoryAdmin(admin.ModelAdmin):
 
 class CategoryFeaturesAdmin(admin.ModelAdmin):
     list_display = ("category", "feature_name")
-    search_fields = ("category",)
+    search_fields = ("category__name",)
     search_help_text = _("Пошук за назвою категорії")
 
 

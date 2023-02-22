@@ -1,8 +1,10 @@
 import datetime
 import json
 from abc import ABC
+from typing import List, Any, Dict, Optional, Union
 
 from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import (
@@ -13,8 +15,8 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
-from django.db.models import F
-from django.http import HttpResponseNotFound, HttpResponseRedirect, JsonResponse
+from django.db.models import F, QuerySet
+from django.http import HttpResponseNotFound, HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import (
@@ -72,10 +74,12 @@ class ShopHome(DataMixin, ListView):
     template_name = "shop/home.html"
     context_object_name = "products"
 
-    def get_queryset(self):
+    def get_queryset(self) -> List:
         return get_product_list(querysets.get_product_queryset_for_shop_home_view())
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(
+            self, *, object_list: Union[QuerySet, List] = None, **kwargs: Any
+    ) -> Dict:
         context = super().get_context_data(**kwargs)
         page_range = define_page_range(context)
         flag = self.request.COOKIES.get("flag")
@@ -99,14 +103,14 @@ class RegisterUser(DataMixin, CreateView):
     template_name = "registration/register.html"
     extra_context = {"title": "Реєстрація"}
 
-    def form_valid(self, form):
+    def form_valid(self, form: CustomUserCreationForm) -> HttpResponseRedirect:
         user = form.save()
         buyer = Buyer.objects.create(user=user, name=user.username, email=user.email)
         login(self.request, user)
         response = HttpResponseRedirect(reverse("shop:home"))
         return cart_authorization_handler(self.request, response, user)
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -118,13 +122,13 @@ class ModLoginView(DataMixin, LoginView):
     next_page = "shop:home"
     extra_context = {"title": "Авторизація"}
 
-    def form_valid(self, form):
+    def form_valid(self, form: AuthenticationForm) -> HttpResponseRedirect:
         user = form.get_user()
         login(self.request, user)
         response = HttpResponseRedirect(self.get_success_url())
         return cart_authorization_handler(self.request, response, user)
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -133,7 +137,7 @@ class ModLoginView(DataMixin, LoginView):
 class AdminLoginView(DataMixin, LoginView):
     template_name = "shop/register/login.html"
 
-    def form_valid(self, form):
+    def form_valid(self, form: AuthenticationForm) -> HttpResponseRedirect:
         user = form.get_user()
         response = super().form_valid(form)
         buyer = check_buyer_existence(user)
@@ -143,7 +147,7 @@ class AdminLoginView(DataMixin, LoginView):
             response.delete_cookie("cart")
         return response
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -154,7 +158,7 @@ class ModPasswordChangeView(DataMixin, PasswordChangeView):
     template_name = "shop/register/password_change_form.html"
     extra_context = {"title": "Зміна паролю"}
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -166,7 +170,7 @@ class ModPasswordResetView(DataMixin, PasswordResetView):
     success_url = reverse_lazy("shop:password_reset_done")
     extra_context = {"title": "Скидання паролю"}
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -176,7 +180,7 @@ class ModPasswordResetDoneView(DataMixin, PasswordResetDoneView):
     template_name = "shop/register/password_reset_done.html"
     extra_context = {"title": "Пароль скинутий"}
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -187,7 +191,7 @@ class ModPasswordResetConfirmView(DataMixin, PasswordResetConfirmView):
     success_url = reverse_lazy("shop:password_reset_complete")
     extra_context = {"title": "Підтвердження скидання паролю"}
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -197,7 +201,7 @@ class ModPasswordResetCompleteView(DataMixin, PasswordResetCompleteView):
     template_name = "shop/register/password_reset_complete.html"
     extra_context = {"title": "Скидання паролю виконано"}
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         context.update(self.get_user_context())
         return context
@@ -208,24 +212,22 @@ class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
     template_name = "shop/account.html"
     success_url = reverse_lazy("shop:home")
 
-    def test_func(self, **kwargs):
+    def test_func(self, **kwargs: Any) -> bool:
         return self.request.user.id == self.kwargs["pk"]
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         user = self.request.user
         orders = querysets.get_order_queryset_for_user_account_view(user)
         order_list = define_order_list(orders)
         self.initial = define_buyer_data(order_list, user)
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
+        context.update({
                 **self.get_user_context(title="Персональна інформація"),
                 "order_list": order_list,
-            }
-        )
+            })
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: BuyerAccountForm) -> HttpResponseRedirect:
         buyer, data = self.request.user.buyer, form.cleaned_data
         buyer.name, buyer.email = data.get("name"), data.get("email")
         buyer.tel, buyer.address = data.get("tel"), data.get("address")
@@ -239,11 +241,11 @@ class CategoryView(DataMixin, ListView):
     template_name = "shop/category.html"
     context_object_name = "products"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object_list = None
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> Dict:
         data_context = self.get_user_context()
         categories, slug = data_context["category_list"], self.kwargs["category_slug"]
         page_data = PageData.objects.filter(page_name="category").first()
@@ -275,7 +277,7 @@ class CategoryView(DataMixin, ListView):
         context.update({**data_context, **new_context})
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         self.object_list = self.get_queryset()
         context = self.get_context_data(**kwargs)
         context["brand_filter_form"] = BrandFilterForm(
@@ -292,7 +294,7 @@ class ProductView(DataMixin, DetailView):
     context_object_name = "product"
     queryset = querysets.get_product_queryset_for_product_view()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         product = context["product"]
         product.last_accessed = datetime.datetime.now(tz=timezone.utc)
@@ -322,23 +324,23 @@ class ReviewFormView(FormView):
     template_name = "shop/product.html"
     form_class = ReviewForm
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(
             "shop:product", kwargs={"product_slug": self.kwargs["product_slug"]}
         )
 
-    def form_valid(self, form):
+    def form_valid(self, form: ReviewForm) -> HttpResponseRedirect:
         form.save()
         return super().form_valid(form)
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: ReviewForm) -> HttpResponseRedirect:
         slug = self.kwargs["product_slug"]
         return HttpResponseRedirect(
             reverse("shop:product", kwargs={"product_slug": slug})
         )
 
 
-def updateLike(request):
+def updateLike(request: HttpRequest) -> JsonResponse:
     data = json.loads(request.body)
     review = Review.objects.get(id=int(data["review"]))
     author = User.objects.get(id=int(data["author"]))
@@ -353,7 +355,7 @@ class SuperCategoryView(DataMixin, ListView):
     template_name = "shop/super_category.html"
     context_object_name = "categories"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> Dict:
         pk = self.kwargs["super_category_pk"]
         context_data = self.get_user_context()
         categories = context_data["category_list"]
@@ -381,29 +383,27 @@ class SearchResultView(DataMixin, ListView):
     paginate_by = 20
     context_object_name = "products"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return querysets.get_product_for_search_result_view(self.request.GET.get("q"))
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> Dict:
         object_list = get_product_list(self.get_queryset())
         context = super().get_context_data(object_list=object_list, **kwargs)
         page_range = define_page_range(context)
         page_data = PageData.objects.filter(page_name="search").first()
-        context.update(
-            {
+        context.update({
                 **self.get_user_context(title="Пошук"),
                 "page_range": page_range,
                 "query": self.request.GET.get("q"),
                 "page_data": page_data,
-            }
-        )
+            })
         return context
 
 
 class AboutView(DataMixin, TemplateView):
     template_name = "shop/other/about.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="about").first()
         context.update(
@@ -415,22 +415,20 @@ class AboutView(DataMixin, TemplateView):
 class TermsView(DataMixin, TemplateView):
     template_name = "shop/other/terms.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="terms").first()
-        context.update(
-            {
+        context.update({
                 **self.get_user_context(title="Умови використання сайту"),
                 "page_data": page_data,
-            }
-        )
+            })
         return context
 
 
 class ContactView(DataMixin, TemplateView):
     template_name = "shop/other/contacts.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="contact").first()
         context.update(
@@ -442,7 +440,7 @@ class ContactView(DataMixin, TemplateView):
 class HelpView(DataMixin, TemplateView):
     template_name = "shop/other/help.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="help").first()
         context.update(
@@ -454,7 +452,7 @@ class HelpView(DataMixin, TemplateView):
 class DeliveryView(DataMixin, TemplateView):
     template_name = "shop/other/delivery.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="delivery").first()
         context.update(
@@ -466,7 +464,7 @@ class DeliveryView(DataMixin, TemplateView):
 class CreditView(DataMixin, TemplateView):
     template_name = "shop/other/credit.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="credit").first()
         context.update(
@@ -478,7 +476,7 @@ class CreditView(DataMixin, TemplateView):
 class ReturnProductsView(DataMixin, TemplateView):
     template_name = "shop/other/return_products.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="return").first()
         context.update(
@@ -490,7 +488,7 @@ class ReturnProductsView(DataMixin, TemplateView):
 class ServiceCentersView(DataMixin, TemplateView):
     template_name = "shop/other/service_centers.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="service").first()
         context.update(
@@ -502,7 +500,7 @@ class ServiceCentersView(DataMixin, TemplateView):
 class ForPartnersView(DataMixin, TemplateView):
     template_name = "shop/other/for_partners.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(page_name="partners").first()
         context.update(
@@ -511,7 +509,7 @@ class ForPartnersView(DataMixin, TemplateView):
         return context
 
 
-def updateItem(request):
+def updateItem(request: HttpRequest) -> JsonResponse:
     data = json.loads(request.body)
     productId = data["productId"]
     action = data["action"]
@@ -524,7 +522,7 @@ def updateItem(request):
 class CartView(DataMixin, TemplateView):
     template_name = "shop/cart.html"
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         items, order, cartItems = get_cookies_cart(self.request)
         new_context = {"title": "Корзина", "order": order, "items": items, "flag": True}
@@ -535,17 +533,15 @@ class CartView(DataMixin, TemplateView):
 class CheckoutView(CartView):
     template_name = "shop/checkout.html"
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs: Any) -> Dict:
+        context = super().get_context_data(**kwargs)
         user, cart = self.request.user, {}
         checkout_form = get_checkout_form(user)
-
         items, order = context["items"], context["order"]
         message, items = check_quantity_in_stock(items)
         if message:
             cart, order = correct_cart_order(items, order)
-        context.update(
-            {
+        context.update({
                 "title": "Заказ",
                 "flag": False,
                 "checkout_form": checkout_form,
@@ -553,22 +549,19 @@ class CheckoutView(CartView):
                 "items": items,
                 "order": order,
                 "cartJson": json.dumps(cart),
-            }
-        )
+            })
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         user, args = self.request.user, self.request.POST
         checkout_form = CheckoutForm(args)
         items, order, cartItems = get_cookies_cart(request)
         message, items = check_quantity_in_stock(items)
         if checkout_form.is_valid() and not message:
-            return self.render_to_response(
-                {
+            return self.render_to_response({
                     **self.get_context_data(),
                     **get_response_dict_with_sale_creation(checkout_form, user, items),
-                }
-            )
+                })
         else:
             return self.render_to_response(
                 get_updated_response_dict(
