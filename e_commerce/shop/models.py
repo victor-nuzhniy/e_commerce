@@ -4,16 +4,19 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from slugify import slugify
 
 
-def user_directory_path_1(instance: SuperCategory, filename: str) -> str:
-    return "super_category_{0}/{1}".format(instance.name, filename)
+def user_directory_path(instance, filename: str) -> str:
+    return "{0}_{1}/{2}".format(
+        instance.__class__.__name__.lower(), slugify(instance.name), filename
+    )
 
 
 class SuperCategory(models.Model):
     name = models.CharField(max_length=50, verbose_name="Загальна категорія")
     icon = models.ImageField(
-        upload_to=user_directory_path_1,
+        upload_to=user_directory_path,
         blank=True,
         verbose_name="Іконка",
         max_length=200,
@@ -30,16 +33,12 @@ class SuperCategory(models.Model):
         verbose_name_plural = "Загальні категорії"
 
 
-def user_directory_path_2(instance: Category, filename: str) -> str:
-    return "category_{0}/{1}".format(instance.name, filename)
-
-
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Категорія")
     slug = models.SlugField(unique=True, max_length=100, verbose_name="URL")
     super_category = models.ForeignKey(SuperCategory, on_delete=models.CASCADE)
     icon = models.ImageField(
-        upload_to=user_directory_path_2, blank=True, null=True, max_length=200
+        upload_to=user_directory_path, blank=True, null=True, max_length=200
     )
 
     def __str__(self) -> str:
@@ -159,10 +158,6 @@ class ProductFeature(models.Model):
     class Meta:
         verbose_name = "Характеристики товару"
         verbose_name_plural = "Характеристики товарів"
-
-
-def user_directory_path(instance: ProductImage, filename: str) -> str:
-    return "product_{0}/{1}".format(instance.product.slug, filename)
 
 
 class ProductImage(models.Model):
@@ -391,32 +386,28 @@ class Stock(models.Model):
         return total
 
 
-def user_directory_path_3(instance: PageData, filename: str) -> str:
-    return "page_{0}/{1}".format(instance.page_name, filename)
-
-
 class PageData(models.Model):
     page_name = models.CharField(max_length=50, verbose_name="Назва сторінки")
     banner = models.ImageField(
-        upload_to=user_directory_path_3,
+        upload_to=user_directory_path,
         blank=True,
         verbose_name="Баннер",
         max_length=200,
     )
     image_1 = models.ImageField(
-        upload_to=user_directory_path_3,
+        upload_to=user_directory_path,
         blank=True,
         verbose_name="Зображення 1",
         max_length=200,
     )
     image_2 = models.ImageField(
-        upload_to=user_directory_path_3,
+        upload_to=user_directory_path,
         blank=True,
         verbose_name="Зображення 2",
         max_length=200,
     )
     image_3 = models.ImageField(
-        upload_to=user_directory_path_3,
+        upload_to=user_directory_path,
         blank=True,
         verbose_name="Зображення 3",
         max_length=200,

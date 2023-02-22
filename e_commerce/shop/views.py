@@ -25,7 +25,6 @@ from django.views.generic import (
     FormView,
     ListView,
     TemplateView,
-    UpdateView,
 )
 
 from .forms import (
