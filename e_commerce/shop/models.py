@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
 
-def user_directory_path_1(instance, filename):
+def user_directory_path_1(instance: SuperCategory, filename: str) -> str:
     return "super_category_{0}/{1}".format(instance.name, filename)
 
 
@@ -17,10 +19,10 @@ class SuperCategory(models.Model):
         max_length=200,
     )
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("shop:super_category", kwargs={"super_category_pk": self.pk})
 
     class Meta:
@@ -28,7 +30,7 @@ class SuperCategory(models.Model):
         verbose_name_plural = "Загальні категорії"
 
 
-def user_directory_path_2(instance, filename):
+def user_directory_path_2(instance: Category, filename: str) -> str:
     return "category_{0}/{1}".format(instance.name, filename)
 
 
@@ -40,10 +42,10 @@ class Category(models.Model):
         upload_to=user_directory_path_2, blank=True, null=True, max_length=200
     )
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("shop:category", kwargs={"category_slug": self.slug})
 
     class Meta:
@@ -57,8 +59,8 @@ class CategoryFeatures(models.Model):
         max_length=100, verbose_name="Характеристика категорії"
     )
 
-    def __str__(self):
-        return self.feature_name
+    def __str__(self) -> str:
+        return str(self.feature_name)
 
     class Meta:
         verbose_name = "Характеристика категорії"
@@ -69,8 +71,8 @@ class Brand(models.Model):
     name = models.CharField(max_length=100, verbose_name="Найменування бренда")
     slug = models.SlugField(unique=True, max_length=100, verbose_name="URL")
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     class Meta:
         verbose_name = "Бренд"
@@ -96,8 +98,8 @@ class Supplier(models.Model):
         auto_now_add=True, verbose_name="Дата внесення в базу"
     )
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     class Meta:
         verbose_name = "Постачальник"
@@ -129,10 +131,10 @@ class Product(models.Model):
         verbose_name="Кількість переглядів", default=0
     )
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("shop:product", kwargs={"product_slug": self.slug})
 
     class Meta:
@@ -151,15 +153,15 @@ class ProductFeature(models.Model):
         max_length=100, blank=True, null=True, verbose_name="Характеристика товара"
     )
 
-    def __str__(self):
-        return self.feature
+    def __str__(self) -> str:
+        return str(self.feature)
 
     class Meta:
         verbose_name = "Характеристики товару"
         verbose_name_plural = "Характеристики товарів"
 
 
-def user_directory_path(instance, filename):
+def user_directory_path(instance: ProductImage, filename: str) -> str:
     return "product_{0}/{1}".format(instance.product.slug, filename)
 
 
@@ -172,7 +174,7 @@ class ProductImage(models.Model):
         max_length=200,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Image"
 
     class Meta:
@@ -206,7 +208,7 @@ class Review(models.Model):
         blank=True, null=True, verbose_name="Кількість дизлайків"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.product.name + "-review"
 
     class Meta:
@@ -226,7 +228,7 @@ class Like(models.Model):
         verbose_name="Автор лайку",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Likes"
 
     class Meta:
@@ -250,7 +252,7 @@ class Income(models.Model):
     )
     income_date = models.DateField(auto_now_add=True, verbose_name="Дата поставки")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.income_date)
 
     class Meta:
@@ -271,7 +273,7 @@ class Buyer(models.Model):
         verbose_name = "Покупець"
         verbose_name_plural = "Покупці"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)
 
 
@@ -290,7 +292,7 @@ class Order(models.Model):
         verbose_name = "Замовлення"
         verbose_name_plural = "Замовлення"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.ordered_at)
 
     @property
@@ -302,7 +304,7 @@ class Order(models.Model):
 
     @property
     @admin.display(description="Загальна кількість")
-    def get_order_items(self):
+    def get_order_items(self) -> int:
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
@@ -326,12 +328,12 @@ class OrderItem(models.Model):
         verbose_name = "Замовлений товар"
         verbose_name_plural = "Замовлені товари"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.product.name
 
     @property
     @admin.display(description="Сума замовлення")
-    def get_total(self):
+    def get_total(self) -> float:
         total = self.product.price * self.quantity
         return total
 
@@ -351,7 +353,7 @@ class Sale(models.Model):
         max_length=6, blank=True, verbose_name="Номер відділення"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.sale_date)
 
     class Meta:
@@ -376,7 +378,7 @@ class Stock(models.Model):
         verbose_name="Постачальник",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.product.name
 
     class Meta:
@@ -384,12 +386,12 @@ class Stock(models.Model):
         verbose_name_plural = "Склади"
 
     @property
-    def get_price_total(self):
+    def get_price_total(self) -> float:
         total = self.quantity * self.price
         return total
 
 
-def user_directory_path_3(instance, filename):
+def user_directory_path_3(instance: PageData, filename: str) -> str:
     return "page_{0}/{1}".format(instance.page_name, filename)
 
 
@@ -432,8 +434,8 @@ class PageData(models.Model):
     text_2 = models.TextField(blank=True, null=True, verbose_name="Текстове поле 2")
     text_3 = models.TextField(blank=True, null=True, verbose_name="Текстове поле 3")
 
-    def __str__(self):
-        return self.page_name
+    def __str__(self) -> str:
+        return str(self.page_name)
 
     class Meta:
         verbose_name = "Дані сторінки"

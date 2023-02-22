@@ -1,6 +1,7 @@
 from abc import ABC
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from shop.models import (
     Brand,
@@ -291,6 +292,8 @@ class SuperCategoryAdmin(admin.ModelAdmin):
 
 class CategoryFeaturesAdmin(admin.ModelAdmin):
     list_display = ("category", "feature_name")
+    search_fields = ("category",)
+    search_help_text = _("Пошук за назвою категорії")
 
 
 class PageDataAdmin(admin.ModelAdmin):
