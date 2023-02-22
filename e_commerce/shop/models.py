@@ -427,7 +427,7 @@ class PageData(models.Model):
     text_3 = models.TextField(blank=True, null=True, verbose_name="Текстове поле 3")
 
     def __str__(self) -> str:
-        return str(self.page_name)
+        return str(self.name)
 
     class Meta:
         verbose_name = "Дані сторінки"

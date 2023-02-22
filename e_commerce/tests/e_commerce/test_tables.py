@@ -1,7 +1,4 @@
-import tempfile
-
 import pytest
-from django.test import override_settings
 from shop.models import (
     Brand,
     Buyer,
@@ -47,13 +44,11 @@ from tests.e_commerce.factories import (
 class TestSuperCategory:
     pytestmark = pytest.mark.django_db
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
         BaseModelFactory.check_factory(
             factory_class=SuperCategoryFactory, model=SuperCategory
         )
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
         obj: SuperCategory = SuperCategoryFactory()
         expected_result = obj.name
@@ -64,11 +59,9 @@ class TestSuperCategory:
 class TestCategory:
     pytestmark = pytest.mark.django_db
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
         BaseModelFactory.check_factory(factory_class=CategoryFactory, model=Category)
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
         obj: Category = CategoryFactory()
         expected_result = obj.name
@@ -94,11 +87,9 @@ class TestCategoryFeature:
 class TestBrand:
     pytestmark = pytest.mark.django_db
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
         BaseModelFactory.check_factory(factory_class=BrandFactory, model=Brand)
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
         obj: Brand = BrandFactory()
         expected_result = obj.name
@@ -150,13 +141,11 @@ class TestProductFeature:
 class TestProductImage:
     pytestmark = pytest.mark.django_db
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
         BaseModelFactory.check_factory(
             factory_class=ProductImageFactory, model=ProductImage
         )
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
         obj: ProductImage = ProductImageFactory()
         expected_result = "Image"
@@ -271,12 +260,10 @@ class TestStock:
 class TestPageData:
     pytestmark = pytest.mark.django_db
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_factory(self) -> None:
         BaseModelFactory.check_factory(factory_class=PageDataFactory, model=PageData)
 
-    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test__str__(self) -> None:
         obj: PageData = PageDataFactory()
-        expected_result = obj.page_name
+        expected_result = obj.name
         assert expected_result == obj.__str__()

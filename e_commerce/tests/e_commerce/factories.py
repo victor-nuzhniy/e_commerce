@@ -353,7 +353,7 @@ class PageDataFactory(BaseModelFactory):
     class Meta:
         model = PageData
 
-    page_name = factory.Faker("pystr", min_chars=1, max_chars=50)
+    name = factory.Faker("pystr", min_chars=1, max_chars=50)
     banner = factory.django.ImageField(color="black")
     image_1 = factory.django.ImageField(color="green")
     image_2 = factory.django.ImageField(color="blue")
