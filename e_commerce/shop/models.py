@@ -7,9 +7,10 @@ from django.urls import reverse
 from slugify import slugify
 
 
-def user_directory_path(instance, filename: str) -> str:
+def user_directory_path(obj, filename: str) -> str:
+    name = obj.product.name if isinstance(obj, ProductImage) else obj.name
     return "{0}_{1}/{2}".format(
-        instance.__class__.__name__.lower(), slugify(instance.name), filename
+        obj.__class__.__name__.lower(), slugify(name), filename
     )
 
 
@@ -387,7 +388,7 @@ class Stock(models.Model):
 
 
 class PageData(models.Model):
-    page_name = models.CharField(max_length=50, verbose_name="Назва сторінки")
+    name = models.CharField(max_length=50, verbose_name="Назва сторінки")
     banner = models.ImageField(
         upload_to=user_directory_path,
         blank=True,

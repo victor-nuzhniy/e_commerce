@@ -305,7 +305,7 @@ class CategoryFeaturesAdmin(admin.ModelAdmin):
 
 
 class PageDataAdmin(admin.ModelAdmin):
-    list_display = ("page_name",)
+    list_display = ("name",)
 
 
 admin.site.unregister(User)
