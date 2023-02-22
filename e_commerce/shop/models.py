@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Union
+
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
@@ -7,7 +9,10 @@ from django.urls import reverse
 from slugify import slugify
 
 
-def user_directory_path(obj, filename: str) -> str:
+def user_directory_path(
+        obj: Union[SuperCategory, Category, ProductImage, PageData],
+        filename: str,
+) -> str:
     name = obj.product.name if isinstance(obj, ProductImage) else obj.name
     return "{0}_{1}/{2}".format(
         obj.__class__.__name__.lower(), slugify(name), filename

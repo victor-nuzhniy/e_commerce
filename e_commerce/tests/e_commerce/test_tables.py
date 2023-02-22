@@ -1,3 +1,4 @@
+from faker import Faker
 import pytest
 from shop.models import (
     Brand,
@@ -17,7 +18,9 @@ from shop.models import (
     Stock,
     SuperCategory,
     Supplier,
+    user_directory_path,
 )
+from slugify import slugify
 from tests.bases import BaseModelFactory
 from tests.e_commerce.factories import (
     BrandFactory,
@@ -49,6 +52,11 @@ class TestSuperCategory:
             factory_class=SuperCategoryFactory, model=SuperCategory
         )
 
+    def test_get_absolute_url(self) -> None:
+        super_category: SuperCategory = SuperCategoryFactory()
+        expected_result = f'/super_category/{super_category.id}/'
+        assert expected_result == super_category.get_absolute_url()
+
     def test__str__(self) -> None:
         obj: SuperCategory = SuperCategoryFactory()
         expected_result = obj.name
@@ -61,6 +69,11 @@ class TestCategory:
 
     def test_factory(self) -> None:
         BaseModelFactory.check_factory(factory_class=CategoryFactory, model=Category)
+
+    def test_get_absolute_url(self) -> None:
+        category: SuperCategory = CategoryFactory()
+        expected_result = f'/category/{category.slug}/'
+        assert expected_result == category.get_absolute_url()
 
     def test__str__(self) -> None:
         obj: Category = CategoryFactory()
@@ -115,6 +128,11 @@ class TestProduct:
 
     def test_factory(self) -> None:
         BaseModelFactory.check_factory(factory_class=ProductFactory, model=Product)
+
+    def test_get_absolute_url(self) -> None:
+        product: Product = ProductFactory()
+        expected_result = f'/product/{product.slug}/'
+        assert expected_result == product.get_absolute_url()
 
     def test__str__(self) -> None:
         obj: Product = ProductFactory()
@@ -216,6 +234,18 @@ class TestOrder:
         expected_result = str(obj.ordered_at)
         assert expected_result == obj.__str__()
 
+    def test_get_order_total(self) -> None:
+        order: Order = OrderFactory()
+        orderitems = [OrderItemFactory(order=order) for _ in range(5)]
+        expected_result = sum([item.get_total for item in orderitems])
+        assert expected_result == order.get_order_total
+
+    def test_get_order_items(self) -> None:
+        order: Order = OrderFactory()
+        orderitems = [OrderItemFactory(order=order) for _ in range(5)]
+        expected_result = sum([item.quantity for item in orderitems])
+        assert expected_result == order.get_order_items
+
 
 @pytest.mark.django_db
 class TestOrderItem:
@@ -228,6 +258,11 @@ class TestOrderItem:
         obj: OrderItem = OrderItemFactory()
         expected_result = obj.product.name
         assert expected_result == obj.__str__()
+
+    def test_get_total(self) -> None:
+        orderitem: OrderItem = OrderItemFactory()
+        expected_result = orderitem.product.price * orderitem.quantity
+        assert expected_result == orderitem.get_total
 
 
 @pytest.mark.django_db
@@ -255,6 +290,11 @@ class TestStock:
         expected_result = obj.product.name
         assert expected_result == obj.__str__()
 
+    def test_get_price_total(self) -> None:
+        stock: Stock = StockFactory()
+        expected_result = stock.quantity * stock.price
+        assert expected_result == stock.get_price_total
+
 
 @pytest.mark.django_db
 class TestPageData:
@@ -267,3 +307,16 @@ class TestPageData:
         obj: PageData = PageDataFactory()
         expected_result = obj.name
         assert expected_result == obj.__str__()
+
+
+@pytest.mark.django_db
+def test_user_directory_path(faker: Faker) -> None:
+    objects = [(obj(), faker.pystr(min_chars=10, max_chars=15)) for obj in (
+        SuperCategoryFactory, CategoryFactory, ProductImageFactory, PageDataFactory
+    )]
+    for obj, filename in objects:
+        name = obj.product.name if isinstance(obj, ProductImage) else obj.name
+        expected_result = "{0}_{1}/{2}".format(
+            obj.__class__.__name__.lower(), slugify(name), filename
+        )
+        assert expected_result == user_directory_path(obj, filename)
