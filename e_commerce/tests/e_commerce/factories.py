@@ -344,7 +344,7 @@ class StockFactory(BaseModelFactory):
 
     product = factory.SubFactory(factory=ProductFactory)
     income = factory.SubFactory(factory=IncomeFactory)
-    quantity = factory.Faker("pyint", min_value=1)
+    quantity = factory.Faker("pyint", min_value=2)
     price = factory.Faker("pydecimal", left_digits=8, right_digits=2, positive=True)
     supplier = factory.SubFactory(factory=SupplierFactory)
 
