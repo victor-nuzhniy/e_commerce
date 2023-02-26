@@ -235,13 +235,13 @@ def get_cookies_cart(
 
 
 def correct_cart_order(
-    items: List[NestedNamespace], order: Dict[str, int]
+    items: List[NestedNamespace],
 ) -> Tuple[Dict[int, Dict[str, int]], Dict[str, int]]:
     """
     Takes NestedNamespace objects list and order as arguments
     and corrects cart and order data.
     """
-    cart, number, total = {}, 0, 0
+    cart, number, total, order = {}, 0, 0, {}
     for item in items:
         if item.quantity:
             number += item.quantity
@@ -260,11 +260,14 @@ def handling_brand_price_form(
     Creates filter logic. Filter uses brand and prise as parameters
     for filtering output product list.
     """
+    filtered_brand_set = {}
     if data:
         filtered_brand_set = set(data.getlist("brand"))
-        low = int(data["low"]) if data["low"] else 0
-        high = int(data["high"]) if data["high"] else 100000000
-        product_list = list(filter(lambda x: (low <= x[0].price <= high), product_list))
+        low = int(data["low"]) if data.get("low") else 0
+        high = int(data["high"]) if data.get("high") else 100000000
+        product_list = list(
+            filter(lambda x: (low <= x[0].price <= high), product_list)
+        )
         if filtered_brand_set:
             product_list = list(
                 filter(
@@ -318,7 +321,8 @@ def cart_authorization_handler(
     creates new order using cookies cart data.
     If cart is empty, return flag in cookies with 1 sec lifetime.
     """
-    cookie_cart = json.loads(request.COOKIES.get("cart"))
+    cart = request.COOKIES.get("cart")
+    cookie_cart = json.loads(cart) if cart else None
     if cookie_cart:
         buyer, created = Buyer.objects.get_or_create(user=user)
         order, created = Order.objects.get_or_create(buyer=buyer, complete=False)
@@ -326,11 +330,11 @@ def cart_authorization_handler(
             items = OrderItem.objects.filter(order=order)
             for item in items:
                 item.delete()
-        for item in cookie_cart.items():
+        for key, value in cookie_cart.items():
             OrderItem.objects.create(
-                product=Product.objects.get(id=int(item[0][0])),
+                product=Product.objects.get(id=int(key)),
                 order=order,
-                quantity=int(list(item[1].values())[0]),
+                quantity=int(value.get('quantity')),
             )
     else:
         response.set_cookie("flag", "1", max_age=1)
@@ -346,7 +350,7 @@ def define_cart(
     empty cart.
     """
     cart = {}
-    if flag:
+    if flag and not isinstance(user, AnonymousUser):
         order = Order.objects.filter(buyer__user=user).last()
         if order and not order.complete:
             items = OrderItem.objects.filter(order=order)

@@ -83,7 +83,7 @@ class ShopHome(DataMixin, ListView):
         page_range = define_page_range(context)
         flag = self.request.COOKIES.get("flag")
         cart = define_cart(flag, self.request.user)
-        page_data = PageData.objects.filter(page_name="home").first()
+        page_data = PageData.objects.filter(name="home").first()
         context.update(
             {
                 **self.get_user_context(title="АМУНІЦІЯ ДЛЯ СВОЇХ"),
@@ -247,7 +247,7 @@ class CategoryView(DataMixin, ListView):
     def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> Dict:
         data_context = self.get_user_context()
         categories, slug = data_context["category_list"], self.kwargs["category_slug"]
-        page_data = PageData.objects.filter(page_name="category").first()
+        page_data = PageData.objects.filter(name="category").first()
         category_list = define_category_list(slug, data_context["category_list"])
         products = querysets.get_product_queryset_for_category_view(slug)
         brands = define_brand_list(products)
@@ -366,7 +366,7 @@ class SuperCategoryView(DataMixin, ListView):
         )
         context = super().get_context_data(object_list=category_list, **kwargs)
         page_range = define_page_range(context)
-        page_data = PageData.objects.filter(page_name="super_category").first()
+        page_data = PageData.objects.filter(name="super_category").first()
         new_context = {
             "title": title,
             "super_category_flag": True,
@@ -389,7 +389,7 @@ class SearchResultView(DataMixin, ListView):
         object_list = get_product_list(self.get_queryset())
         context = super().get_context_data(object_list=object_list, **kwargs)
         page_range = define_page_range(context)
-        page_data = PageData.objects.filter(page_name="search").first()
+        page_data = PageData.objects.filter(name="search").first()
         context.update({
                 **self.get_user_context(title="Пошук"),
                 "page_range": page_range,
@@ -404,7 +404,7 @@ class AboutView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="about").first()
+        page_data = PageData.objects.filter(name="about").first()
         context.update(
             {**self.get_user_context(title="Про нас"), "page_data": page_data}
         )
@@ -416,7 +416,7 @@ class TermsView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="terms").first()
+        page_data = PageData.objects.filter(name="terms").first()
         context.update({
                 **self.get_user_context(title="Умови використання сайту"),
                 "page_data": page_data,
@@ -429,7 +429,7 @@ class ContactView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="contact").first()
+        page_data = PageData.objects.filter(name="contact").first()
         context.update(
             {**self.get_user_context(title="Контакти"), "page_data": page_data}
         )
@@ -441,7 +441,7 @@ class HelpView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="help").first()
+        page_data = PageData.objects.filter(name="help").first()
         context.update(
             {**self.get_user_context(title="Допомога"), "page_data": page_data}
         )
@@ -453,7 +453,7 @@ class DeliveryView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="delivery").first()
+        page_data = PageData.objects.filter(name="delivery").first()
         context.update(
             {**self.get_user_context(title="Доставка"), "page_data": page_data}
         )
@@ -465,7 +465,7 @@ class CreditView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="credit").first()
+        page_data = PageData.objects.filter(name="credit").first()
         context.update(
             {**self.get_user_context(title="Кредит"), "page_data": page_data}
         )
@@ -477,7 +477,7 @@ class ReturnProductsView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="return").first()
+        page_data = PageData.objects.filter(name="return").first()
         context.update(
             {**self.get_user_context(title="Повернення товару"), "page_data": page_data}
         )
@@ -489,7 +489,7 @@ class ServiceCentersView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="service").first()
+        page_data = PageData.objects.filter(name="service").first()
         context.update(
             {**self.get_user_context(title="Сервісні центри"), "page_data": page_data}
         )
@@ -501,7 +501,7 @@ class ForPartnersView(DataMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
-        page_data = PageData.objects.filter(page_name="partners").first()
+        page_data = PageData.objects.filter(name="partners").first()
         context.update(
             {**self.get_user_context(title="Партнерам"), "page_data": page_data}
         )
@@ -539,7 +539,7 @@ class CheckoutView(CartView):
         items, order = context["items"], context["order"]
         message, items = check_quantity_in_stock(items)
         if message:
-            cart, order = correct_cart_order(items, order)
+            cart, order = correct_cart_order(items)
         context.update({
                 "title": "Заказ",
                 "flag": False,
