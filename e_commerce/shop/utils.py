@@ -505,9 +505,7 @@ def modify_like_with_response(
     return JsonResponse("Like was not added", safe=False)
 
 
-def check_buyer_existence(
-    user: Union[AUTH_USER_MODEL, AnonymousUser]
-) -> Optional[Buyer]:
+def check_buyer_existence(user: AUTH_USER_MODEL) -> Optional[Buyer]:
     """
     Check buyer existence for given user. This can happen for
     admin workers, that became users not via buyer registration
@@ -533,13 +531,14 @@ def perform_orderItem_actions(product_id: int, action: str, buyer: Buyer) -> Non
         if action == "add":
             orderItem.quantity = F("quantity") + 1
         elif action == "remove":
-            orderItem.quantity = F("quantity") + 1
+            orderItem.quantity = F("quantity") - 1
         orderItem.save()
+        orderItem.refresh_from_db()
         if orderItem.quantity <= 0:
             orderItem.delete()
 
 
-def get_order_with_cleaning(user: Union[AUTH_USER_MODEL, AnonymousUser]) -> Order:
+def get_order_with_cleaning(user: AUTH_USER_MODEL) -> Order:
     """
     Gets or creates order. If order was got and not completed,
     clears its data.
