@@ -70,7 +70,7 @@ def page_not_found(request, exception):
 
 class ShopHome(DataMixin, ListView):
     paginate_by = 20
-    template_name = "shop/home.html"
+    template_name = "a_shop/home.html"
     context_object_name = "products"
 
     def get_queryset(self) -> List:
