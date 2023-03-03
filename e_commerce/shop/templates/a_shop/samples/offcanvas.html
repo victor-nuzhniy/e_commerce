@@ -1,0 +1,97 @@
+{% load static %}
+
+<div
+        class="offcanvas offcanvas-start"
+        tabindex="-1"
+        id="offcanvasExample"
+        aria-labelledby="offcanvasExampleLabel"
+>
+  <div class="offcanvas-header w-100">
+    <a href="{% url 'shop:home' %}" class="navbar-brand">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Амуніція для своїх</h5>
+    </a>
+    <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+    ></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column wm-100 overflow-hidden">
+    {% if not user.is_authenticated %}
+        <div style="w-100">
+            <div class="d-flex flex-row">
+                <a
+                        class="nav-link px-3"
+                        style="cursor:pointer"
+                        data-bs-toggle="modal"
+                        data-bs-target="#loginModal"
+                >
+                    Вхід
+                </a>
+                <div class="nav-link">|</div>
+                <a
+                        class="nav-link px-3"
+                        style="cursor:pointer"
+                        data-bs-toggle="modal"
+                        data-bs-target="#registerModal"
+                >
+                    Реєстрація
+                </a>
+            </div>
+            <div>Авторизуйтесь для отримання розширених можливостей</div>
+        </div>
+    {% endif %}
+    <div class="dropdown mt-3 w-100">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        Каталог
+      </button>
+      <ul class="dropdown-menu">
+          {% for super_category in super_categories %}
+            <li>
+                <a class="dropdown-item" href="{% url 'shop:super_category' super_category.id %}">
+                    {{ super_category.name }}
+                </a>
+            </li>
+          {% endfor %}
+      </ul>
+    </div>
+        <a class="nav-link d-flex flex-row align-items-center w-100" href="{% url 'shop:cart' %}">
+            <img src="{% static 'shop/images/grey_basket.png' %}" class="menu-btn" style="margin:10px">
+            Корзина
+        </a>
+        <hr class="bg-black w-100">
+        <div class="nav-link w-100">Інформація про компанію</div>
+        <hr class="bg-black w-100">
+        <a href="{% url 'shop:about' %}" class="nav-link w-100 my-2">Про нас</a>
+        <a href="{% url 'shop:terms' %}" class="nav-link w-100 my-2">Умови використання сайту</a>
+        <a href="{% url 'shop:contacts' %}" class="nav-link w-100 my-2">Контакти</a>
+        <a href="{% url 'shop:help' %}" class="nav-link w-100 my-2">Допомога</a>
+        <a href="{% url 'shop:delivery' %}" class="nav-link w-100 my-2">Доставка і оплата</a>
+        <a href="{% url 'shop:credit' %}" class="nav-link w-100 my-2">Кредит</a>
+        <a href="{% url 'shop:return_products' %}" class="nav-link w-100 my-2">Повернення товару</a>
+        <a href="{% url 'shop:service_centers' %}" class="nav-link w-100 my-2">Сервісні центрі</a>
+        <a href="{% url 'shop:for_partners' %}" class="nav-link w-100 my-2">Партнерам</a>
+        <hr class="bg-black w-100">
+        <div class="nav-link w-100">Ми в соціальних мережах</div>
+        <hr class="bg-black w-100">
+        <div class="d-flex flex-row justify-content-around w-100">
+            <a href="https://uk-ua.facebook.com/">
+                <img src="{% static 'shop/images/Facebook.svg' %}" height="25" width="25">
+            </a>
+            <a href="https://www.instagram.com/">
+                <img src="{% static 'shop/images/Instagram.svg' %}" height="25" width="25">
+            </a>
+            <a href="https://web.telegram.org/">
+                <img src="{% static 'shop/images/Telegram.svg' %}" height="25" width="25">
+            </a>
+            <a href="https://www.twitter.com/">
+                <img src="{% static 'shop/images/Twitter.svg' %}" height="25" width="25">
+            </a>
+            <a href="https://www.youtube.com/">
+                <img src="{% static 'shop/images/Youtube.svg' %}" height="25" width="25">
+            </a>
+        </div>
+  </div>
+
+</div>

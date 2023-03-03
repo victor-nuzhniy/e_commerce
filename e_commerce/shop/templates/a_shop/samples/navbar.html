@@ -26,6 +26,9 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'shop:home' %}">Home</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Меню</a>
+        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Каталог
@@ -36,19 +39,16 @@
             {% endfor %}
           </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
         {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'shop:user_account' user.id %}">{{ user }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'shop:logout' %}">Logout</a>
+            <a class="nav-link" href="{% url 'shop:logout' %}">Вийти</a>
           </li>
         {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Логін</a>
           </li>
         {% endif %}
         <li class="nav-item">
