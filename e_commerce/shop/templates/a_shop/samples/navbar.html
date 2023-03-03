@@ -18,24 +18,52 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand" href="{% url 'shop:home' %}">Амуніція для своїх</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'shop:home' %}">Home</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'shop:home' %}">
+            Home
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Меню</a>
+          <a
+                  class="nav-link"
+                  data-bs-toggle="offcanvas"
+                  href="#offcanvasExample"
+                  role="button"
+                  aria-controls="offcanvasExample"
+          >
+            Меню
+          </a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+          >
             Каталог
           </a>
           <ul class="dropdown-menu">
             {% for super_category in super_categories %}
-            <li><a class="dropdown-item" href="{% url 'shop:super_category' super_category.id %}">{{ super_category.name }}</a></li>
+            <li>
+              <a class="dropdown-item" href="{% url 'shop:super_category' super_category.id %}">
+                {{ super_category.name }}
+              </a>
+            </li>
             {% endfor %}
           </ul>
         </li>
@@ -48,13 +76,18 @@
           </li>
         {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Логін</a>
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+              Логін
+            </a>
           </li>
         {% endif %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'shop:cart' %}">
               <div style="display:flex; flex-direction:row">
-                    <img src="{% static 'shop/images/black_basket.png' %}" style="width:25px; height:25px; margin-right:1px">
+                    <img
+                            src="{% static 'shop/images/black_basket.png' %}"
+                            style="width:25px; height:25px; margin-right:1px"
+                    >
                     <div class="cart-basket-item">{{ cartItem }}</div>
                 </div>
             </a>
@@ -62,7 +95,13 @@
 
       </ul>
       <form class="d-flex" role="search" action="{% url 'shop:search_results' %}">
-        <input class="form-control me-2" name="q" type="search" placeholder="Пошук..." aria-label="Search">
+        <input
+                class="form-control me-2"
+                name="q"
+                type="search"
+                placeholder="Пошук..."
+                aria-label="Search"
+        >
         <button class="btn btn-outline-success" type="submit">Знайти</button>
       </form>
     </div>
