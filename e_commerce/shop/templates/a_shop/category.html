@@ -5,9 +5,14 @@
 {% block content %}
     <nav aria-label="breadcrumb" class="ms-2">
       <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{% url 'shop:home' %}" class="text-decoration-none">Home</a></li>
           <li class="breadcrumb-item">
-              <a href="{% url 'shop:super_category' category.super_category.id %}" class="text-decoration-none">
+              <a href="{% url 'shop:home' %}" class="text-decoration-none">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+              <a
+                      href="{% url 'shop:super_category' category.super_category.id %}"
+                      class="text-decoration-none"
+              >
                   {{ category.super_category }}
               </a>
           </li>
