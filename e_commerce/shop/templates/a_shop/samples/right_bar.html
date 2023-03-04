@@ -11,7 +11,7 @@
     {% endif %}
     {% if category_flag %}
         {% for category in categories %}
-                <a href="{{ category.get_absolute_url }}" class="d-flex flex-row text-decoration-none my-1 w-100">
+                <a href="{{ category.get_absolute_url }}" class="nav-link d-flex flex-row text-decoration-none my-1 w-100">
                     {% if category.icon %}
                     <div><img src="{{ category.icon.url }}" style="width:auto; height:auto; max-width:20px; max-height:20px"></div>
                     {% endif %}

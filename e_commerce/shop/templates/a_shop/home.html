@@ -3,11 +3,16 @@
 {% load shop_tags %}
 
 {% block content %}
+    <nav aria-label="breadcrumb" class="ms-2">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Home</li>
+      </ol>
+    </nav>
     <div class="w-100 d-flex flex-row align-items-start">
-            <div class="col-lg-4 col-xl-3 d-none d-lg-block">
+            <div class="col-lg-4 col-xl-3 d-none d-lg-block mx-0 pe-2">
                 {% include 'a_shop/samples/right_bar.html' %}
             </div>
-            <div class="col-12 col-lg-8 col-xl-9">
+            <div class="col-12 col-lg-8 col-xl-9 mx-0 px-1">
                 {% include 'a_shop/samples/page_data_top.html' %}
                 {% include 'a_shop/samples/product_list.html' %}
                 {% include 'a_shop/samples/page_data_bottom.html' %}

@@ -237,7 +237,7 @@ class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
 class CategoryView(DataMixin, ListView):
     model = Product
     paginate_by = 20
-    template_name = "shop/category.html"
+    template_name = "a_shop/category.html"
     context_object_name = "products"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
