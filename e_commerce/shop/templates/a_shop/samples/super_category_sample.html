@@ -1,0 +1,18 @@
+{% load static %}
+
+<div class="w-100 p-3" style="background-color: #eee;">
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-6 col-lg-6 col-xl-4 mb-4 mb-lg-2 mx-0 h-100">
+                <div class="card w-100 h-100">
+                    <a href="{{ category.get_absolute_url }}" class="text-decoration-none text-dark">
+                        <h5 class="mb-0 w-100 text-center">{{ category.name }}</h5>
+                        {% if category.icon %}
+                            <img src="{{ category.icon.url }}" class="card-img-top mw-100 h-50">
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

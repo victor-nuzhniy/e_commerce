@@ -1,0 +1,17 @@
+{% extends 'a_shop/base.html' %}
+{% load static %}
+
+{% block content %}
+        <div class="w-100 d-flex flex-row align-items-start">
+            <div class="col-lg-4 col-xl-3 d-none d-lg-block">
+                {% include 'a_shop/samples/right_bar.html' %}
+            </div>
+            <div class="col-12 col-lg-8 col-xl-9 d-flex flex-column">
+                <div class="fs-3">{{ title }}</div>
+                {% include 'a_shop/samples/page_data_top.html' %}
+                {% include 'a_shop/samples/super_category_sample.html' %}
+                {% include 'shop/samples/paginator.html' %}
+                {% include 'a_shop/samples/page_data_bottom.html' %}
+            </div>
+    </div>
+{% endblock %}

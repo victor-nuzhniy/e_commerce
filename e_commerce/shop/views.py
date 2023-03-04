@@ -351,7 +351,7 @@ def updateLike(request: HttpRequest) -> JsonResponse:
 class SuperCategoryView(DataMixin, ListView):
     model = Category
     paginate_by = 20
-    template_name = "shop/super_category.html"
+    template_name = "a_shop/super_category.html"
     context_object_name = "categories"
 
     def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> Dict:
