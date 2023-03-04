@@ -19,9 +19,10 @@ class ShopQuerySets:
     @staticmethod
     def get_product_queryset_for_shop_home_view() -> QuerySet:
         return (
-            Product.objects.only("id", "name", "price")
-            .order_by("access_number")
-            .prefetch_related(
+            Product.objects.only("id", "name", "price", "sold")
+            .order_by("access_number").select_related("category").only(
+                'category__name', 'category__slug'
+            ).prefetch_related(
                 Prefetch(
                     "productimage_set",
                     queryset=ProductImage.objects.filter(
