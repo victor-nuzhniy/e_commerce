@@ -17,7 +17,7 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'shop:home' %}">Амуніція для своїх</a>
+    <a class="navbar-brand fs-6" href="{% url 'shop:home' %}">Амуніція для своїх</a>
     <button
             class="navbar-toggler"
             type="button"
@@ -26,6 +26,7 @@
             aria-controls="navbarSupportedContent"
             aria-expanded="false"
             aria-label="Toggle navigation"
+            style="width:70px"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -94,7 +95,7 @@
         </li>
 
       </ul>
-      <form class="d-flex" role="search" action="{% url 'shop:search_results' %}">
+      <form class="d-flex flex-row align-items-center" role="search" action="{% url 'shop:search_results' %}">
         <input
                 class="form-control me-2"
                 name="q"
@@ -102,7 +103,7 @@
                 placeholder="Пошук..."
                 aria-label="Search"
         >
-        <button class="btn btn-outline-success" type="submit">Знайти</button>
+        <button class="btn btn-outline-success d-flex flex-row align-items-center" type="submit">Знайти</button>
       </form>
     </div>
   </div>
