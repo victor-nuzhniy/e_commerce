@@ -1,0 +1,49 @@
+{% load static %}
+{% load shop_tags %}
+
+{% if page_data %}
+<div class="d-flex flex-column w-100">
+    {% if page_data.header_1 %}
+        <div>
+            <h3>{{ page_data.header_1 }}</h3>
+        </div>
+    {% endif %}
+
+    {% if page_data.text_1 or page_data.image_1 %}
+        <div class="d-flex flex-row flex-wrap justify-content-around w-100">
+            {% if page_data.text_1 %}
+                <div class="w-75">
+                    {{ page_data.text_1 }}
+                </div>
+            {% endif %}
+            {% if page_data.image_1 %}
+                <img class="w-25 m-5" src="{{ page_data.image_1.url }}">
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if page_data.banner %}
+        <img class="w-100" src="{{ page_data.banner.url }}">
+    {% endif %}
+
+    {% if page_data.header_2 %}
+        <div>
+            <h3>{{ page_data.header_2 }}</h3>
+        </div>
+    {% endif %}
+
+    {% if page_data.text_2 or page_data.image_2 %}
+        <div class="d-flex flex-row flex-wrap justify-content-around w-100">
+            {% if page_data.text_2 %}
+                <div class="w-75">
+                    {{ page_data.text_2 }}
+                </div>
+            {% endif %}
+            {% if page_data.image_2 %}
+                <img class="w-25 m-5" src="{{ page_data.image_2.url }}">
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+{% endif %}

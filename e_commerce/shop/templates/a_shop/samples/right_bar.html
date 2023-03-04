@@ -1,0 +1,66 @@
+{% load static %}
+
+<div class="d-flex flex-column align-items-start w-100 ps-3">
+    {% if super_category_flag %}
+        {% for super_category in super_categories %}
+            <a href="{{ super_category.get_absolute_url }}" class="nav-link d-flex flex-row text-decoration-none my-1 w-100">
+                <img src="{{ super_category.icon.url }}" width="18" height="18">
+                <div class="ms-3">{{ super_category }}</div>
+            </a>
+        {% endfor %}
+    {% endif %}
+    {% if category_flag %}
+        {% for category in categories %}
+                <a href="{{ category.get_absolute_url }}" class="d-flex flex-row text-decoration-none my-1 w-100">
+                    {% if category.icon %}
+                    <div><img src="{{ category.icon.url }}" style="width:auto; height:auto; max-width:20px; max-height:20px"></div>
+                    {% endif %}
+                    <div class="nav-link ms-3">{{ category }}</div>
+                </a>
+        {% endfor %}
+    {% endif %}
+
+
+    {% if category %}
+    <hr style="height:1px; background-color:rgb(220,220,220); border:none; width:94%">
+    <div class="filter">
+
+        Фільтр
+        <form class="filter-main" style="flex-direction:column; min-width:none; width:auto" action="{% url 'shop:category' category.slug %}" method="post">
+            {% csrf_token %}
+            {{brand_filter_form.as_p }}
+            <div>Ціна</div>
+            {{ price_filter_form.as_p }}
+            <input type="submit" value="Застосувати" style="width:100px; border:none; background-color:white; font-family:'Fira Code'; font-size:16px; cursor:pointer">
+            <a href="{% url 'shop:category' category.slug %}">Скинути</a>
+        </form>
+    </div>
+    {% endif %}
+
+
+
+
+    <hr class="bg-black w-100">
+    <a href="{% url 'shop:contacts' %}" class="nav-link d-flex flex-row align-items-center">
+        <img src="{% static 'shop/images/grey_question.png' %}" width="18" height="18">
+        <div class="ms-3">Довідковий центр</div>
+    </a>
+    <hr class="bg-black w-100">
+    <a href="{% url 'shop:delivery' %}" class="nav-link d-flex flex-row align-items-center">
+        <img src="{% static 'shop/images/grey_stock.png' %}" width="18" height="18">
+        <div class="ms-3">Точки видачі</div>
+    </a>
+    <hr class="bg-black w-100">
+    {% if not user.is_authenticated %}
+        <div class="d-flex flex-column align-items-center justify-content-around">
+            <p>Раді вітати!</p>
+            <p>Ввійдіть для того, щоб отримувати рекомендації, персональні бонуси та знижки</p>
+            <button
+                    class="btn btn-secondary w-100"
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+            >Ввійдіть в особистий кабінет</button>
+        </div>
+    {% endif %}
+    {% include 'a_shop/samples/right_bar_small.html' %}
+</div>

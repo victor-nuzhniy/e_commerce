@@ -1,0 +1,27 @@
+{% load static %}
+{% load shop_tags %}
+
+{% if page_data %}
+<div class="d-flex flex-column w-100">
+
+    {% if page_data.header_3 %}
+        <div>
+            <h3>{{ page_data.header_3 }}</h3>
+        </div>
+    {% endif %}
+
+    {% if page_data.text_3 or page_data.image_3 %}
+        <div class="d-flex flex-row flex-wrap justify-content-around">
+            {% if page_data.text_3 %}
+                <div class="w-75">
+                    {{ page_data.text_3 }}
+                </div>
+            {% endif %}
+            {% if page_data.image_3 %}
+                <img class="w-25" src="{{ page_data.image_3.url }}">
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+{% endif %}
