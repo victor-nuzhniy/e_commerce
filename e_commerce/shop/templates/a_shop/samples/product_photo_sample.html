@@ -38,11 +38,11 @@
 </div>
 
 <script>
-var exampleModal = document.getElementById('photoModal')
-exampleModal.addEventListener('show.bs.modal', function (event) {
-  var button = event.relatedTarget
-  var img_url = button.getAttribute('data-bs-1')
-  var modalImg = exampleModal.querySelector('.modal-image')
+var photoModal = document.getElementById('photoModal')
+photoModal.addEventListener('show.bs.modal', function (event) {
+  var photo_button = event.relatedTarget
+  var img_url = photo_button.getAttribute('data-bs-1')
+  var modalImg = photoModal.querySelector('.modal-image')
   modalImg.src = img_url
   })
 </script>
