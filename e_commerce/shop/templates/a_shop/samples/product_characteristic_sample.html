@@ -1,0 +1,13 @@
+{% load static %}
+
+<div class="custom-font-size p-2">
+    <div class="col-12 col-md-6 d-flex flex-column align-items-start">
+        {% for product_feature in product_features %}
+            <div class="d-flex flex-row w-100">
+                <div class="col-6">{{ product_feature.feature_name }}</div>
+                <div class="col-6">{{ product_feature }}</div>
+            </div>
+            <hr class="bg-black w-100">
+        {% endfor %}
+    </div>
+</div>

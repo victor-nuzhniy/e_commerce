@@ -3,3 +3,83 @@
 .custom-font-size{
     font-size: min(calc(10px + 0.9vw), 16px);
 }
+
+/* new star rating */
+@import "compass/css3";
+
+$rad: 8px;
+
+.rating {
+	background: #fff;
+}
+.rating input[type="radio"] {
+	position: fixed;
+	top: 0;
+	right: 100%;
+}
+.rating label {
+	font-size: 1.5em;
+	padding: 0.5em;
+	margin: 0;
+	float: left;
+	cursor: pointer;
+	@include transition(0.2s);
+}
+.rating input[type="radio"]:checked ~ input + label {
+	background: none;
+	color: #004C99;
+}
+.rating input + label {
+	background: #fff;
+	color: gold;
+	margin: 0 0 1em 0;
+}
+.rating input + label:first-of-type {
+	border-top-left-radius: $rad;
+	border-bottom-left-radius: $rad;
+}
+.rating input:checked + label {
+	border-top-right-radius: $rad;
+	border-bottom-right-radius: $rad;
+}
+/* end new star rating */
+
+#id_review_text {
+    width: 100%;
+}
+
+.like-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: none;
+    background: none;
+    color: #0000cc;
+    cursor: pointer;
+}
+
+.like-button img {
+    height: 20px;
+    width: 20px;
+    margin-right: 5px;
+}
+
+.review {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    border: 1px solid rgb(240,240,240);
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px 5px rgb(200,200,200);
+    width: 95%;
+    margin: 10px;
+}
+
+.product-photo {
+    width: auto;
+    height: auto;
+    max-width: 200px;
+    max-height: 200px;
+    max-height: 100%;
+    margin: 10px;
+}

@@ -1,0 +1,48 @@
+{% load static %}
+
+<div class="row">
+    {% for image in product_images %}
+            <img
+                    class="col-12 col-sm-6 col-lg-4 col-xl-3 p-3"
+                    src="{{ image.image.url }}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#photoModal"
+                    data-bs-1="{{ image.image.url }}"
+            >
+    {% endfor %}
+</div>
+
+<div
+        class="modal fade"
+        id="photoModal"
+        tabindex="-1"
+        aria-labelledby="photoModalLabel"
+        aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="photoModalLabel">Фото</h5>
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+          <img src="" class="modal-image w-100">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var exampleModal = document.getElementById('photoModal')
+exampleModal.addEventListener('show.bs.modal', function (event) {
+  var button = event.relatedTarget
+  var img_url = button.getAttribute('data-bs-1')
+  var modalImg = exampleModal.querySelector('.modal-image')
+  modalImg.src = img_url
+  })
+</script>
