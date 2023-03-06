@@ -1,0 +1,55 @@
+{% load static %}
+{% load shop_tags %}
+
+<div class="container custom-font-size">
+    <div class="row">
+    <div class="col-lg-6 mx-0">
+        {% if product_images %}
+            <img class="m-3 mw-100" src="{{ product_images.0.image.url }}"/>
+        {% endif %}
+    </div>
+    <div class="col-lg-6 mx-0">
+        <div class="d-flex flex-column w-100">
+            <div class="d-flex flex-row justify-content-between mx-0 my-3 ps-2 w-100">
+                {% if product.sold %}
+                    <div>
+                        Товар відсутній
+                    </div>
+                {% else %}
+                    <div>
+                        Є в наявності
+                    </div>
+                {% endif %}
+                <div id="product-in-cart">
+                    <p>Товар доданий до корзини</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row justify-content-around align-items-center my-3 w-100">
+                <h3>{{ product.price }}</h3>
+                <button
+                        data-product="{{ product.id }}"
+                        data-action="add"
+                        data-sold="{{ product.sold }}"
+                        class="btn btn-secondary d-flex flex-row align-items-center"
+                >
+                    <img
+                            src="{% static 'shop/images/white_basket.png' %}"
+                            class="img-fluid mw-25 my-0 me-2"
+                            style="max-width:20px"
+                    >
+                    Купити
+                </button>
+            </div>
+            <div class="d-flex flex-row justify-content-around align-items-center my-3 w-100">
+                <div>Продавець: АМУНІЦІЯ ДЛЯ СВОЇХ</div>
+                <div>
+                    <img src="{% static 'shop/images/main_icon.png' %}" width="25" height="25">
+                </div>
+            </div>
+            <div class="d-flex flex-row justify-content-around align-items-center my-3 w-100">
+                <p class="m-3">{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>

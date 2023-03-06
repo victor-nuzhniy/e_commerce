@@ -289,7 +289,7 @@ class CategoryView(DataMixin, ListView):
 class ProductView(DataMixin, DetailView):
     model = Product
     slug_url_kwarg = "product_slug"
-    template_name = "shop/product.html"
+    template_name = "a_shop/product.html"
     context_object_name = "product"
     queryset = querysets.get_product_queryset_for_product_view()
 

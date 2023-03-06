@@ -1,0 +1,5 @@
+{% load static %}
+
+.custom-font-size{
+    font-size: min(calc(10px + 0.9vw), 16px);
+}
