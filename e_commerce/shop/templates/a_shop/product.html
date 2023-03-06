@@ -32,7 +32,7 @@
         <h2 class="w-100 ps-2">{{ product.name | hide_brackets }}</h2>
         <div class="d-flex flex-row justify-content-between w-100 p-2 custom-font-size">
             {% if product_eval %}
-                <div>Оцінка товара</div>
+                <div class="star-ratings-css" title="{{ product_eval }}"></div>
             {% else %}
                 <div>Товар чекає на Вашу оцінку</div>
             {% endif %}
