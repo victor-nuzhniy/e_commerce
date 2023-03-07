@@ -6,19 +6,17 @@
 <form method="post" action="" class="user-account-form">
     {% csrf_token %}
     {{ form.as_p }}
-    <div style="flex-row justify-content-around">
+    <div class="d-flex flex-row justify-content-around">
         <button type="submit" class="btn btn-secondary btn-sm">
             Підтвердити
         </button>
-        <a href="{% url 'shop:password_change' %}">
-            <button class="btn btn-secondary btn-sm">
-                Змінити пароль
-            </button>
+        <a href="{% url 'shop:password_change' %}" class="btn btn-secondary btn-sm">
+            Змінити пароль
         </a>
     </div>
 </form>
-    <p class="m-3">Архів купівель</p>
-    <p class="m-3">(всі ціни приведені в гривні)</p>
+    <p class="text-center m-3">Архів купівель</p>
+    <p class="text-center m-3">(всі ціни приведені в гривні)</p>
 <div class="w-100">
     <div class="row">
         <div class="col-3">
