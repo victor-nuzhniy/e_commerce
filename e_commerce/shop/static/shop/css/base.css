@@ -3,6 +3,9 @@
 .custom-font-size{
     font-size: min(calc(10px + 0.9vw), 16px);
 }
+.account-font-size{
+    font-size: min(calc(6px + 0.9vw), 16px);
+}
 
 /* new star rating */
 @import "compass/css3";
@@ -149,4 +152,22 @@ $rad: 8px;
 #product-in-cart {
     display: none;
     color: green;
+}
+
+/* account page */
+.user-account-form {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+}
+.user-account-form p {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+.user-account-form input {
+    border: none;
+    border-radius: 3px;
+    background-color: rgb(180,180,180);
 }

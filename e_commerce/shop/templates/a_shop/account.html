@@ -1,0 +1,70 @@
+{% extends 'a_shop/base.html' %}
+{% load shop_tags %}
+
+{% block content %}
+<div class="account-font-size ps-1 w-100">
+<form method="post" action="" class="user-account-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div style="flex-row justify-content-around">
+        <button type="submit" class="btn btn-secondary btn-sm">
+            Підтвердити
+        </button>
+        <a href="{% url 'shop:password_change' %}">
+            <button class="btn btn-secondary btn-sm">
+                Змінити пароль
+            </button>
+        </a>
+    </div>
+</form>
+    <p class="m-3">Архів купівель</p>
+    <p class="m-3">(всі ціни приведені в гривні)</p>
+<div class="w-100">
+    <div class="row">
+        <div class="col-3">
+            <div>Дата замовлення</div>
+            <div>Дата продажу</div>
+        </div>
+            <div class="col-6 d-flex flex-column">
+                <div class="w-100 text-center">Найменування товару</div>
+                <div class="d-flex flex-row justify-content-center w-100">
+                    <div class="text-center" style="width:20px">шт</div>
+                    <div class="text-center" style="width:100px">Ціна</div>
+                    <div class="text-center" style="width:100px">Всього</div>
+                </div>
+            </div>
+        <div class="col-1 text-center">шт</div>
+        <div class="col-2 text-center">Загалом</div>
+    </div>
+    <hr class="bg-black w-100">
+
+    {% for order in order_list %}
+    {% if order.0.get_order_total %}
+    <div class="row">
+        <div class="col-3">
+            <div>{{ order.0.ordered_at }}</div>
+            <div>{{ order.1 }}</div>
+        </div>
+        <div class="col-6">
+            {% for orderitem in order.2 %}
+                <div class="d-flex flex-column">
+                    <div class="w-100">{{ orderitem.product.name | hide_brackets }}</div>
+                    <div class="d-flex flex-row justify-content-center w-100">
+                        <div class="text-center" style="width:20px">{{ orderitem.quantity }}</div>
+                        <div class="text-center" style="width:100px">{{ orderitem.product.price }}</div>
+                        <div class="text-center" style="width:100px">{{ orderitem.get_total }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-1 text-center">{{ order.0.get_order_items }}</div>
+        <div class="col-2 text-center">{{ order.0.get_order_total }}</div>
+    </div>
+    <hr class="bg-black w-100">
+
+    {% endif %}
+    {% endfor %}
+
+</div>
+</div>
+{% endblock %}

@@ -208,7 +208,7 @@ class ModPasswordResetCompleteView(DataMixin, PasswordResetCompleteView):
 
 class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
     form_class = BuyerAccountForm
-    template_name = "shop/account.html"
+    template_name = "a_shop/account.html"
     success_url = reverse_lazy("shop:home")
 
     def test_func(self, **kwargs: Any) -> bool:
