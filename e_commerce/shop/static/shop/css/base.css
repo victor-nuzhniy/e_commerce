@@ -145,3 +145,8 @@ $rad: 8px;
   overflow: hidden;
 }
 /* end readonly star rating */
+
+#product-in-cart {
+    display: none;
+    color: green;
+}

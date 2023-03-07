@@ -8,12 +8,12 @@
       {% for product in products %}
     <div class="col-md-6 col-lg-6 col-xl-4 mb-4 mb-lg-2 mx-0 h-100">
       <div class="card w-100 h-100">
-        <h5 class="mb-0">{{ product.0.name | hide_brackets }}</h5>
+        <h5 class="mb-0 text-center">{{ product.0.name | hide_brackets }}</h5>
         <a href="{{ product.0.get_absolute_url }}">
           {% if product.1 %}
             <img
                     src="{{ product.1.url }}"
-                    class="card-img-top mw-100 h-50"
+                    class="card-img-top mw-100 mh-50"
                     alt="Laptop"
             >
           {% else %}
