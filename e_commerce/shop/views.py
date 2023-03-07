@@ -378,7 +378,7 @@ class SuperCategoryView(DataMixin, ListView):
 
 
 class SearchResultView(DataMixin, ListView):
-    template_name = "shop/search_results.html"
+    template_name = "a_shop/search_results.html"
     paginate_by = 20
     context_object_name = "products"
 

@@ -1,0 +1,12 @@
+{% extends 'a_shop/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main-info">
+    {% include 'a_shop/samples/page_data_top.html' %}
+    <h1>Результат пошуку за запитом "{{ query }}"</h1>
+
+    {% include 'a_shop/samples/product_list.html' %}
+    {% include 'a_shop/samples/page_data_bottom.html' %}
+</div>
+{% endblock %}
