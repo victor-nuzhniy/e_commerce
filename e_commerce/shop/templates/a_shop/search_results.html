@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block content %}
-<div class="main-info">
     {% include 'a_shop/samples/page_data_top.html' %}
-    <h1>Результат пошуку за запитом "{{ query }}"</h1>
-
+    <h1 class="w-100 text-center">Результат пошуку за запитом "{{ query }}"</h1>
+    {% if not products %}
+        <p class="text-center p-3 w-100">Спробуйте більш точно вказати параметри пошуку</p>
+    {% endif %}
     {% include 'a_shop/samples/product_list.html' %}
     {% include 'a_shop/samples/paginator.html' %}
     {% include 'a_shop/samples/page_data_bottom.html' %}
-</div>
 {% endblock %}

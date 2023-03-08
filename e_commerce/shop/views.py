@@ -391,7 +391,9 @@ class SearchResultView(DataMixin, ListView):
     context_object_name = "products"
 
     def get_queryset(self) -> QuerySet:
-        return querysets.get_product_for_search_result_view(self.request.GET.get("q"))
+        if self.request.GET.get("q"):
+            return querysets.get_product_for_search_result_view(self.request.GET.get("q"))
+        return Product.objects.none()
 
     def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> Dict:
         object_list = get_product_list(self.get_queryset())
