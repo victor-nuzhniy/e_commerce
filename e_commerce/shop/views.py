@@ -400,7 +400,7 @@ class SearchResultView(DataMixin, ListView):
 
 
 class AboutView(DataMixin, TemplateView):
-    template_name = "shop/other/about.html"
+    template_name = "a_shop/other/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
