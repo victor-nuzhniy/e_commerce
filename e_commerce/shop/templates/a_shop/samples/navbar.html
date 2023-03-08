@@ -61,7 +61,10 @@
           <ul class="dropdown-menu">
             {% for super_category in super_categories %}
             <li>
-              <a class="dropdown-item" href="{% url 'shop:super_category' super_category.id %}">
+              <a
+                      class="dropdown-item"
+                      href="{% url 'shop:super_category' super_category.id %}"
+              >
                 {{ super_category.name }}
               </a>
             </li>
@@ -70,14 +73,21 @@
         </li>
         {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'shop:user_account' user.id %}">{{ user }}</a>
+            <a class="nav-link" href="{% url 'shop:user_account' user.id %}">
+              {{ user }}
+            </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'shop:logout' %}">Вийти</a>
           </li>
         {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <a
+                    class="nav-link"
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+            >
               Логін
             </a>
           </li>
@@ -95,7 +105,11 @@
         </li>
 
       </ul>
-      <form class="d-flex flex-row align-items-center" role="search" action="{% url 'shop:search_results' %}">
+      <form
+              class="d-flex flex-row align-items-center"
+              role="search"
+              action="{% url 'shop:search_results' %}"
+      >
         <input
                 class="form-control me-2"
                 name="q"
@@ -103,7 +117,12 @@
                 placeholder="Пошук..."
                 aria-label="Search"
         >
-        <button class="btn btn-outline-success d-flex flex-row align-items-center" type="submit">Знайти</button>
+        <button
+                class="btn btn-outline-success d-flex flex-row align-items-center"
+                type="submit"
+        >
+          Знайти
+        </button>
       </form>
     </div>
   </div>

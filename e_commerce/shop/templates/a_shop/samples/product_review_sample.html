@@ -28,17 +28,28 @@
             <input class="btn btn-secondary" type="submit" value="Зберегти">
         </form>
     {% else %}
-        <div class="w-100 fs-4 text-center">Авторизуйтесь, щоб залишити відгук про цей товар</div>
+        <div class="w-100 fs-4 text-center">
+            Авторизуйтесь, щоб залишити відгук про цей товар
+        </div>
     {% endif %}
     {% for review in product_review %}
         <div class="review">
-            <div class="d-flex flex-column justify-content-start align-items-start w-100">
-                <div class="d-flex flex-row justify-content-between align-items-center px-3 pt-2 w-100">
+            <div
+                    class="d-flex flex-column justify-content-start align-items-start w-100"
+            >
+                <div
+                        class="d-flex flex-row justify-content-between align-items-center px-3 pt-2 w-100"
+                >
                     {{ review.review_author }}
                     {{ review.review_date }}
                     <div class="d-flex flex-row px-3">
                     <div class="d-flex flex-row me-2">
-                        <div class="like-button" data-review="{{ review.id }}" data-author="{{ user.id }}" data-like="{{ True }}">
+                        <div
+                                class="like-button"
+                                data-review="{{ review.id }}"
+                                data-author="{{ user.id }}"
+                                data-like="{{ True }}"
+                        >
                             <img src="{% static 'shop/images/like_#0000cc.png' %}">
                             {% if review.like_num %}
                                 {{ review.like_num }}
@@ -48,7 +59,12 @@
                         </div>
                     </div>
                     <div class="d-flex flex-row">
-                        <div class="like-button" data-review="{{ review.id }}" data-author="{{ user.id }}" data-like="{{ False }}">
+                        <div
+                                class="like-button"
+                                data-review="{{ review.id }}"
+                                data-author="{{ user.id }}"
+                                data-like="{{ False }}"
+                        >
                             <img src="{% static 'shop/images/dislike_#0000cc.png' %}">
                             {% if review.dislike_num %}
                                 {{ review.dislike_num }}
@@ -59,7 +75,9 @@
                     </div>
                     </div>
                 </div>
-                <div class="d-flex flex-row justify-content-between align-items-center px-3 w-100">
+                <div
+                        class="d-flex flex-row justify-content-between align-items-center px-3 w-100"
+                >
                     <div class="rating" style="color:gold">
                         {% for _ in review.grade|get_range %}
                             <i class="fa fa-star"></i>
@@ -67,7 +85,9 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex flex-row justify-content-between align-items-center p-3 w-100">
+            <div
+                    class="d-flex flex-row justify-content-between align-items-center p-3 w-100"
+            >
                 {{ review.review_text }}
             </div>
         </div>

@@ -46,11 +46,19 @@
         <div class="col-6">
             {% for orderitem in order.2 %}
                 <div class="d-flex flex-column">
-                    <div class="w-100">{{ orderitem.product.name | hide_brackets }}</div>
+                    <div class="w-100">
+                        {{ orderitem.product.name | hide_brackets }}
+                    </div>
                     <div class="d-flex flex-row justify-content-center w-100">
-                        <div class="text-center" style="width:20px">{{ orderitem.quantity }}</div>
-                        <div class="text-center" style="width:100px">{{ orderitem.product.price }}</div>
-                        <div class="text-center" style="width:100px">{{ orderitem.get_total }}</div>
+                        <div class="text-center" style="width:20px">
+                            {{ orderitem.quantity }}
+                        </div>
+                        <div class="text-center" style="width:100px">
+                            {{ orderitem.product.price }}
+                        </div>
+                        <div class="text-center" style="width:100px">
+                            {{ orderitem.get_total }}
+                        </div>
                     </div>
                 </div>
             {% endfor %}

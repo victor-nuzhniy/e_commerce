@@ -10,17 +10,24 @@
                 {% endif %}
                 {% for i in page_range %}
                     {% if page_obj.number == i %}
-                        <div class="paginator-item" style="background-color: rgb(240,240,240)">{{ i }}</div>
+                        <div class="paginator-item" style="background-color: rgb(240,240,240)">
+                            {{ i }}
+                        </div>
                     {% else %}
                         {% if i is page_obj.paginator.ELLIPSIS %}
                             <div class="paginator-dot">{{ page_obj.paginator.ELLIPSIS }}</div>
                         {% else %}
-                            <a href="?page={{ i }}&q={{ query }}" class="paginator-item">{{ i }}</a>
+                            <a href="?page={{ i }}&q={{ query }}" class="paginator-item">
+                                {{ i }}
+                            </a>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}&q={{ query }}" class="paginator-item">></a>
+                    <a
+                            href="?page={{ page_obj.next_page_number }}&q={{ query }}"
+                            class="paginator-item"
+                    >></a>
                 {% endif %}
             </div>
         {% endif %}
