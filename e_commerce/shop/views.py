@@ -1,7 +1,7 @@
 import datetime
 import json
 from abc import ABC
-from typing import List, Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
@@ -16,7 +16,13 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.db.models import F, QuerySet
-from django.http import HttpResponseNotFound, HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import (
@@ -77,7 +83,7 @@ class ShopHome(DataMixin, ListView):
         return get_product_list(querysets.get_product_queryset_for_shop_home_view())
 
     def get_context_data(
-            self, *, object_list: Union[QuerySet, List] = None, **kwargs: Any
+        self, *, object_list: Union[QuerySet, List] = None, **kwargs: Any
     ) -> Dict:
         context = super().get_context_data(**kwargs)
         page_range = define_page_range(context)
@@ -220,10 +226,12 @@ class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
         order_list = define_order_list(orders)
         self.initial = define_buyer_data(order_list, user)
         context = super().get_context_data(**kwargs)
-        context.update({
+        context.update(
+            {
                 **self.get_user_context(title="Персональна інформація"),
                 "order_list": order_list,
-            })
+            }
+        )
         return context
 
     def form_valid(self, form: BuyerAccountForm) -> HttpResponseRedirect:
@@ -390,12 +398,14 @@ class SearchResultView(DataMixin, ListView):
         context = super().get_context_data(object_list=object_list, **kwargs)
         page_range = define_page_range(context)
         page_data = PageData.objects.filter(name="search").first()
-        context.update({
+        context.update(
+            {
                 **self.get_user_context(title="Пошук"),
                 "page_range": page_range,
                 "query": self.request.GET.get("q"),
                 "page_data": page_data,
-            })
+            }
+        )
         return context
 
 
@@ -417,10 +427,12 @@ class TermsView(DataMixin, TemplateView):
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         page_data = PageData.objects.filter(name="terms").first()
-        context.update({
+        context.update(
+            {
                 **self.get_user_context(title="Умови використання сайту"),
                 "page_data": page_data,
-            })
+            }
+        )
         return context
 
 
@@ -540,7 +552,8 @@ class CheckoutView(CartView):
         message, items = check_quantity_in_stock(items)
         if message:
             cart, order = correct_cart_order(items)
-        context.update({
+        context.update(
+            {
                 "title": "Заказ",
                 "flag": False,
                 "checkout_form": checkout_form,
@@ -548,7 +561,8 @@ class CheckoutView(CartView):
                 "items": items,
                 "order": order,
                 "cartJson": json.dumps(cart),
-            })
+            }
+        )
         return context
 
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -557,10 +571,12 @@ class CheckoutView(CartView):
         items, order, cartItems = get_cookies_cart(request)
         message, items = check_quantity_in_stock(items)
         if checkout_form.is_valid() and not message:
-            return self.render_to_response({
+            return self.render_to_response(
+                {
                     **self.get_context_data(),
                     **get_response_dict_with_sale_creation(checkout_form, user, items),
-                })
+                }
+            )
         else:
             return self.render_to_response(
                 get_updated_response_dict(

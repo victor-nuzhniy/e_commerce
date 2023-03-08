@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Set, Tuple, List
+from typing import Any, List, Set, Tuple
 
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models import QuerySet
-from django import forms
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from shop.models import (
@@ -29,7 +30,6 @@ from shop.models import (
     SuperCategory,
     Supplier,
 )
-from django.db import models
 
 
 class ProductFeatureInline(admin.StackedInline):
@@ -38,7 +38,7 @@ class ProductFeatureInline(admin.StackedInline):
     extra = 1
 
     def formfield_for_foreignkey(
-            self, db_field: models.ForeignKey, request: HttpRequest, **kwargs: Any
+        self, db_field: models.ForeignKey, request: HttpRequest, **kwargs: Any
     ) -> Set[ProductFeature]:
         if db_field.name == "feature_name" and (
             object_id := request.resolver_match.kwargs.get("object_id")
@@ -153,7 +153,7 @@ class IncomeAdmin(admin.ModelAdmin):
     list_select_related = ["product", "supplier"]
 
     def save_model(
-            self, request: HttpRequest, obj: Income, form: forms.ModelForm, change: Any
+        self, request: HttpRequest, obj: Income, form: forms.ModelForm, change: Any
     ) -> None:
         stock, prev_quantity = Stock.objects.filter(income=obj), 0
         if stock:
@@ -197,8 +197,10 @@ class SaleAdmin(admin.ModelAdmin):
         return obj.order.buyer
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        return super().get_queryset(request).prefetch_related(
-            "order__orderitem_set", "order__orderitem_set__product"
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related("order__orderitem_set", "order__orderitem_set__product")
         )
 
 
@@ -238,8 +240,10 @@ class OrderAdmin(admin.ModelAdmin):
     list_select_related = ["buyer", "buyer__user"]
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        return super().get_queryset(request).prefetch_related(
-            "orderitem_set", "orderitem_set__product"
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related("orderitem_set", "orderitem_set__product")
         )
 
 

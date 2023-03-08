@@ -265,9 +265,7 @@ def handling_brand_price_form(
         filtered_brand_set = set(data.getlist("brand"))
         low = int(data["low"]) if data.get("low") else 0
         high = int(data["high"]) if data.get("high") else 100000000
-        product_list = list(
-            filter(lambda x: (low <= x[0].price <= high), product_list)
-        )
+        product_list = list(filter(lambda x: (low <= x[0].price <= high), product_list))
         if filtered_brand_set:
             product_list = list(
                 filter(
@@ -334,7 +332,7 @@ def cart_authorization_handler(
             OrderItem.objects.create(
                 product=Product.objects.get(id=int(key)),
                 order=order,
-                quantity=int(value.get('quantity')),
+                quantity=int(value.get("quantity")),
             )
     else:
         response.set_cookie("flag", "1", max_age=1)
