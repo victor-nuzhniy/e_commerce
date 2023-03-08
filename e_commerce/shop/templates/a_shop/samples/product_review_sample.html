@@ -2,31 +2,17 @@
 {% load shop_tags %}
 
 <div class="col-12 col-md-6 d-flex flex-column align-items-start">
-    <div class="w-100 fs-4 text-center p-3">Залиште відгук про цей товар</div>
     {% if user.is_authenticated %}
-        <form class="w-100 p-3" action="{% url 'shop:product_form' product.slug %}" method="post">
-            {% csrf_token %}
-            <div class="form-errors">{{ review_form.non_field_errors }}</div>
-            <!-- rating-->
-            <div class="rating">
-                <input type="radio" name="grade" id="one" value="1" checked />
-                <label for="one"><i class="fa fa-star"></i></label>
-                <input type="radio" name="grade" id="two" value="2" />
-                <label for="two"><i class="fa fa-star"></i></label>
-                <input type="radio" name="grade" id="three" value="3" />
-                <label for="three"><i class="fa fa-star"></i></label>
-                <input type="radio" name="grade" id="four" value="4" />
-                <label for="four"><i class="fa fa-star"></i></label>
-                <input type="radio" name="grade" id="five" value="5" />
-                <label for="five"><i class="fa fa-star"></i></label>
-            </div>
-            <!-- rating -->
-            <div class="m-2 pe-4 mw-100">{{ review_form.review_text }}</div>
-            <input type="hidden" name="review_author" value="{{ user.id }}">
-            <input type="hidden" name="product" value="{{ product.id }}">
-            <div class="form-errors">{{ review_form.review_text.errors }}</div>
-            <input class="btn btn-secondary" type="submit" value="Зберегти">
-        </form>
+        <div class="w-100 fs-4 text-center p-3">
+            <a
+                    class="nav-link px-3"
+                    style="cursor:pointer"
+                    data-bs-toggle="modal"
+                    data-bs-target="#reviewModal"
+            >
+                Залиште відгук про цей товар
+            </a>
+        </div>
     {% else %}
         <div class="w-100 fs-4 text-center">
             Авторизуйтесь, щоб залишити відгук про цей товар

@@ -1,0 +1,50 @@
+{% load static %}
+
+<div
+        class="modal fade"
+        id="reviewModal"
+        tabindex="-1"
+        aria-labelledby="reviewModalLabel"
+        aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <form
+            class="modal-content"
+            action="{% url 'shop:product_form' product.slug %}"
+            method="post"
+    >
+      <div class="modal-header w-100">
+        <h1 class="modal-title fs-5" id="reviewModalLabel">Відгук</h1>
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body d-flex flex-column">
+                {% csrf_token %}
+                <div class="form-errors">{{ review_form.non_field_errors }}</div>
+                <!-- rating-->
+                <div class="rating">
+                    <input type="radio" name="grade" id="one" value="1" checked />
+                    <label for="one"><i class="fa fa-star"></i></label>
+                    <input type="radio" name="grade" id="two" value="2" />
+                    <label for="two"><i class="fa fa-star"></i></label>
+                    <input type="radio" name="grade" id="three" value="3" />
+                    <label for="three"><i class="fa fa-star"></i></label>
+                    <input type="radio" name="grade" id="four" value="4" />
+                    <label for="four"><i class="fa fa-star"></i></label>
+                    <input type="radio" name="grade" id="five" value="5" />
+                    <label for="five"><i class="fa fa-star"></i></label>
+                </div>
+                <!-- rating -->
+                <div class="m-2 pe-4 mw-100">{{ review_form.review_text }}</div>
+                <input type="hidden" name="review_author" value="{{ user.id }}">
+                <input type="hidden" name="product" value="{{ product.id }}">
+                <div class="form-errors">{{ review_form.review_text.errors }}</div>
+                <input class="btn btn-secondary" type="submit" value="Зберегти">
+      </div>
+    </form>
+  </div>
+</div>
