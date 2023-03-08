@@ -530,7 +530,7 @@ class CartView(DataMixin, TemplateView):
 
 
 class CheckoutView(CartView):
-    template_name = "shop/checkout.html"
+    template_name = "a_shop/checkout.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
