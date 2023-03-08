@@ -376,6 +376,18 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-grappelli"
+version = "3.0.4"
+description = "A jazzy skin for the Django Admin-Interface."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-grappelli-3.0.4.tar.gz", hash = "sha256:344bff45a10bf9fa251d9e0ec724a3ed1bae5dada58bbc1c030421ce9d428a72"},
+    {file = "django_grappelli-3.0.4-py2.py3-none-any.whl", hash = "sha256:f2d515de1f58c50b0f723fdf99cea66f4a26a8e9c9229291f8cee47a2dc94110"},
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.0"
 description = "Backport of PEP 654 (exception groups)"
@@ -1814,4 +1826,4 @@ requests = ">=2.0,<3.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d362e7bf3471ad577360d24e24fdba25c6b5ac0218c737cb139c7a7fea8f0c06"
+content-hash = "3243de1dcc2e74101971fa061816580739ec5120d7a01d7ac11ce5cfa85f8efa"

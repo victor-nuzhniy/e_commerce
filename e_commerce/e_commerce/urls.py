@@ -21,6 +21,7 @@ from shop.views import page_not_found
 from e_commerce import settings
 
 urlpatterns = [
+    path('grappelli/', include('grappelli.urls')),
     path("admin/", admin.site.urls),
     path("", include("shop.urls")),
 ]
