@@ -155,3 +155,8 @@ CACHES = {
         "LOCATION": os.path.join(BASE_DIR, "shop_cache"),
     }
 }
+
+EMAIL_HOST = os.getenv("MAIL_SERVER")
+EMAIL_HOST_USER = os.getenv("MAIL_USERNAME")
+EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
+EMAIL_PORT = os.getenv("MAIL_PORT")

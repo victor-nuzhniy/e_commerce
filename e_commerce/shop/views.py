@@ -117,7 +117,7 @@ class RegisterUser(DataMixin, CreateView):
 
 class ModLoginView(DataMixin, LoginView):
     redirect_authenticated_user = True
-    template_name = "shop/register/login.html"
+    template_name = "a_shop/register/login.html"
     next_page = "shop:home"
     extra_context = {"title": "Авторизація"}
 
@@ -134,7 +134,7 @@ class ModLoginView(DataMixin, LoginView):
 
 
 class AdminLoginView(DataMixin, LoginView):
-    template_name = "shop/register/login.html"
+    template_name = "a_shop/register/login.html"
 
     def form_valid(self, form: AuthenticationForm) -> HttpResponseRedirect:
         user = form.get_user()
@@ -154,7 +154,7 @@ class AdminLoginView(DataMixin, LoginView):
 
 class ModPasswordChangeView(DataMixin, PasswordChangeView):
     success_url = "shop:home"
-    template_name = "shop/register/password_change_form.html"
+    template_name = "a_shop/register/password_change_form.html"
     extra_context = {"title": "Зміна паролю"}
 
     def get_context_data(self, **kwargs: Any) -> Dict:
@@ -164,8 +164,8 @@ class ModPasswordChangeView(DataMixin, PasswordChangeView):
 
 
 class ModPasswordResetView(DataMixin, PasswordResetView):
-    template_name = "shop/register/password_reset_form.html"
-    email_template_name = "shop/register/password_reset_email.html"
+    template_name = "a_shop/register/password_reset_form.html"
+    email_template_name = "a_shop/register/password_reset_email.html"
     success_url = reverse_lazy("shop:password_reset_done")
     extra_context = {"title": "Скидання паролю"}
 
@@ -176,7 +176,7 @@ class ModPasswordResetView(DataMixin, PasswordResetView):
 
 
 class ModPasswordResetDoneView(DataMixin, PasswordResetDoneView):
-    template_name = "shop/register/password_reset_done.html"
+    template_name = "a_shop/register/password_reset_done.html"
     extra_context = {"title": "Пароль скинутий"}
 
     def get_context_data(self, **kwargs: Any) -> Dict:
@@ -186,7 +186,7 @@ class ModPasswordResetDoneView(DataMixin, PasswordResetDoneView):
 
 
 class ModPasswordResetConfirmView(DataMixin, PasswordResetConfirmView):
-    template_name = "shop/register/password_reset_confirm.html"
+    template_name = "a_shop/register/password_reset_confirm.html"
     success_url = reverse_lazy("shop:password_reset_complete")
     extra_context = {"title": "Підтвердження скидання паролю"}
 
@@ -197,7 +197,7 @@ class ModPasswordResetConfirmView(DataMixin, PasswordResetConfirmView):
 
 
 class ModPasswordResetCompleteView(DataMixin, PasswordResetCompleteView):
-    template_name = "shop/register/password_reset_complete.html"
+    template_name = "a_shop/register/password_reset_complete.html"
     extra_context = {"title": "Скидання паролю виконано"}
 
     def get_context_data(self, **kwargs: Any) -> Dict:
