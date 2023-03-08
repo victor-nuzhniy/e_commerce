@@ -400,7 +400,7 @@ class SearchResultView(DataMixin, ListView):
 
 
 class AboutView(DataMixin, TemplateView):
-    template_name = "a_shop/other/about.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -412,7 +412,7 @@ class AboutView(DataMixin, TemplateView):
 
 
 class TermsView(DataMixin, TemplateView):
-    template_name = "shop/other/terms.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -425,7 +425,7 @@ class TermsView(DataMixin, TemplateView):
 
 
 class ContactView(DataMixin, TemplateView):
-    template_name = "shop/other/contacts.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -437,7 +437,7 @@ class ContactView(DataMixin, TemplateView):
 
 
 class HelpView(DataMixin, TemplateView):
-    template_name = "shop/other/help.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -449,7 +449,7 @@ class HelpView(DataMixin, TemplateView):
 
 
 class DeliveryView(DataMixin, TemplateView):
-    template_name = "shop/other/delivery.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -461,7 +461,7 @@ class DeliveryView(DataMixin, TemplateView):
 
 
 class CreditView(DataMixin, TemplateView):
-    template_name = "shop/other/credit.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -473,7 +473,7 @@ class CreditView(DataMixin, TemplateView):
 
 
 class ReturnProductsView(DataMixin, TemplateView):
-    template_name = "shop/other/return_products.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -485,7 +485,7 @@ class ReturnProductsView(DataMixin, TemplateView):
 
 
 class ServiceCentersView(DataMixin, TemplateView):
-    template_name = "shop/other/service_centers.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
@@ -497,7 +497,7 @@ class ServiceCentersView(DataMixin, TemplateView):
 
 
 class ForPartnersView(DataMixin, TemplateView):
-    template_name = "shop/other/for_partners.html"
+    template_name = "a_shop/about.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
