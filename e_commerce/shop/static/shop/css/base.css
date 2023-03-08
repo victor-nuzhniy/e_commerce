@@ -171,3 +171,9 @@ $rad: 8px;
     border-radius: 3px;
     background-color: rgb(180,180,180);
 }
+
+.cart-quantity {
+    margin: 2px;
+    width: 15px;
+    height: 15px;
+}

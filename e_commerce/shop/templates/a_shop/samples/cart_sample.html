@@ -1,0 +1,83 @@
+{% load static %}
+{% load shop_tags %}
+
+<div class="container account-font-size">
+    {% if message %}
+        <div class="row">
+            {% if warning %}
+                <p class="col-10" id="cart-warning">{{ warning }}</p>
+            {% endif %}
+            <p class="col-10" id="cart-message">{{ message }}</p>
+        <hr class="bg-black w-100">
+        </div>
+    {% endif %}
+    <div class="row" style="height:40px">
+        <a
+                href="{% url 'shop:home' %}"
+                class="col-6 col-sm-5 col-lg-3 btn btn-secondary btn-sm my-auto"
+        >
+            Продовжити купівлю
+        </a>
+    </div>
+    <hr class="bg-black w-100">
+    <div class="row mb-5" style="height:40px">
+        <div class="col-3 col-sm-4 my-auto">Кількість: {{ order.get_order_items }} шт</div>
+        <div class="col-3 col-sm-4 my-auto">Всього: {{ order.get_order_total }} грн</div>
+        {% if flag %}
+            <a
+                    href="{% url 'shop:checkout' %}"
+                    class="col-6 col-sm-4 col-lg-3 btn btn-secondary btn-sm my-auto"
+            >
+                Підтвердити замовлення
+            </a>
+        {% endif %}
+    </div>
+    <div class="row" style="height:40px">
+        <div class="col-3 my-auto">Зображення</div>
+        <p class="col-3 my-auto">Товар</p>
+        <div class="col-2 my-auto">Ціна</div>
+        <div class="col-2 my-auto">Кількість</div>
+        <div class="col-2 my-auto">Загалом</div>
+    </div>
+    <hr class="bg-black w-100">
+    {% for item in items %}
+        <div class="row" style="height:40px">
+            <div class="col-3">
+                <img
+                        src="{{ item.product.productimage.image.image.url }}"
+                        style="width:auto; height:40px;"
+                >
+            </div>
+            <p class="col-3 my-auto">{{ item.product.name | hide_brackets }}</p>
+            <div class="col-2 my-auto">{{ item.product.price }} грн</div>
+            <div class="col-2 d-flex flex-row align-items-center my-auto">
+                <div style="mt-2">{{ item.quantity }}</div>
+                {% if flag %}
+                <div
+                        class="d-flex flex-column justify-content-center"
+                        style="cursor:pointer"
+                >
+                    <img
+                            class="cart-quantity"
+                            src="{% static 'shop/images/triangle-up.png' %}"
+                            data-product="{{ item.product.id }}"
+                            data-action="add"
+                            style="width:8px; height:10px;"
+                    >
+                    <img
+                            class="cart-quantity"
+                            src="{% static 'shop/images/triangle_down.png' %}"
+                            data-product="{{ item.product.id }}"
+                            data-action="remove"
+                            style="width:8px; height:10px;"
+                    >
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-2  my-auto">{{ item.get_total }} грн</div>
+        </div>
+    <hr class="bg-black w-100">
+    {% endfor %}
+
+    {{ cartJson|json_script:"cartJson" }}
+</div>

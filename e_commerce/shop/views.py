@@ -320,7 +320,7 @@ class ProductView(DataMixin, DetailView):
 
 
 class ReviewFormView(FormView):
-    template_name = "shop/product.html"
+    template_name = "a_shop/product.html"
     form_class = ReviewForm
 
     def get_success_url(self) -> str:
@@ -519,7 +519,7 @@ def updateItem(request: HttpRequest) -> JsonResponse:
 
 
 class CartView(DataMixin, TemplateView):
-    template_name = "shop/cart.html"
+    template_name = "a_shop/cart.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
