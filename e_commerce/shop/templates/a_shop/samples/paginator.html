@@ -1,9 +1,12 @@
 {% load static %}
 <!-- pagination -->
         {% if is_paginated %}
-            <div class="pagination">
+            <div class="d-flex flex-row">
                 {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}" class="paginator-item"><</a>
+                    <a
+                            href="?page={{ page_obj.previous_page_number }}&q={{ query }}"
+                            class="paginator-item"
+                    ><</a>
                 {% endif %}
                 {% for i in page_range %}
                     {% if page_obj.number == i %}
