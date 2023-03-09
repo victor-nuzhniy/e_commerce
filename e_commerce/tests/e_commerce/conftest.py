@@ -1,14 +1,35 @@
 from typing import Tuple, List, Union
 from decimal import Decimal
-
+from faker import Faker
+from django.contrib.auth.models import User
 import pytest
-from shop.models import Category, Brand, SuperCategory, ProductImage, Product, OrderItem
+from shop.models import (
+    Category,
+    Brand,
+    SuperCategory,
+    ProductImage,
+    Product,
+    OrderItem,
+    Supplier,
+)
 from tests.e_commerce.factories import (
     SuperCategoryFactory,
     CategoryFactory,
+    CategoryFeatureFactory,
     BrandFactory,
     ProductFactory,
+    ProductFeatureFactory,
     ProductImageFactory,
+    SupplierFactory,
+    UserFactory,
+    BuyerFactory,
+    ReviewFactory,
+    LikeFactory,
+    IncomeFactory,
+    StockFactory,
+    OrderFactory,
+    OrderItemFactory,
+    SaleFactory,
 )
 
 
@@ -42,3 +63,51 @@ def find_instance(
     for elem in elements:
         if getattr(elem.product, attr) == value:
             return elem
+
+
+@pytest.fixture(scope="function")
+def products_preparation_for_view_testing(faker: Faker) -> None:
+    super_categories: List[SuperCategory] = SuperCategoryFactory.create_batch()
+    categories = [
+        CategoryFactory(super_category=super_categories[0]) for _ in range(5)
+    ] + [
+        CategoryFactory(super_category=super_categories[1] for _ in range(5))
+    ]
+    brands: List[Brand] = BrandFactory.create_batch(size=5)
+    users: List[User] = UserFactory.create_batch(size=5)
+    buyers = [BuyerFactory(user=user) for user in users]
+    suppliers: List[Supplier] = SupplierFactory.create_batch(size=2)
+    [CategoryFeatureFactory.create_batch(size=3, category=category) for category in categories]
+    products = []
+    for category in categories:
+        for i, brand in enumerate(brands):
+            products += ProductFactory.create_batch(
+                size=2, category=category, brand=brand, supplier=suppliers[i]
+            )
+    for product in products:
+        for category_feature in product.category.category_featury_set:
+            ProductFeatureFactory(
+                product=product, category_feature=category_feature
+            )
+        ProductImageFactory.create_batch(size=3, product=product)
+        reviews = ReviewFactory.create_batch(
+            size=2, product=product, review_author=users[faker.random_int(min=0, max=4)]
+        )
+        for review in reviews:
+            LikeFactory(
+                review=review, like_author=users[faker.random_int(min=0, max=4)]
+            )
+        income = IncomeFactory(
+            product=product,
+            supplier=suppliers[faker.random_int(min=0, max=1)],
+            income_quantity=10,
+        )
+        StockFactory(
+            product=product,
+            income=income,
+            supplier=income.supplier,
+            quantity=income.quantity,
+        )
+        order = OrderFactory(buyer=buyers[faker.random_int(min=0, max=4)], complete=True)
+        OrderItemFactory(product=product, order=order, quantity=5)
+        SaleFactory(order=order)
