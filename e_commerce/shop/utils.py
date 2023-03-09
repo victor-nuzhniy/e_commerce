@@ -238,7 +238,7 @@ def correct_cart_order(
     items: List[NestedNamespace],
 ) -> Tuple[Dict[int, Dict[str, int]], Dict[str, int]]:
     """
-    Takes NestedNamespace objects list and order as arguments
+    Takes NestedNamespace objects list as argument
     and corrects cart and order data.
     """
     cart, number, total, order = {}, 0, 0, {}
@@ -623,7 +623,7 @@ def get_response_dict_with_sale_creation(
     Creates response dict with Sale creation after
     approving buying.
     """
-    data = form.cleaned_data
+    data = {key: form[key].value() for key in form.fields.keys()}
     order = get_order(user, data)
     items = get_order_items_list(items, order)
     Sale.objects.create(
@@ -647,8 +647,7 @@ def get_updated_response_dict(
     context: Dict,
     message: Optional[str],
     items: List[NestedNamespace],
-    order: Dict[str, int],
-    args: QueryDict,
+    checkout_form: CheckoutForm,
 ) -> Dict:
     """
     Updating context dict after some problems with products
@@ -656,14 +655,13 @@ def get_updated_response_dict(
     updates cart in accordance with available amount of
     products.
     """
-    cart = {}
-    if message:
-        cart, order = correct_cart_order(items, order)
+    cart, order = correct_cart_order(items)
     context.update(
         {
-            "checkout_form": CheckoutForm(args),
+            "checkout_form": checkout_form,
             "message": message,
             "cartJson": json.dumps(cart),
+            "order": order,
         }
     )
     return context

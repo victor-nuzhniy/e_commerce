@@ -79,7 +79,7 @@ class CheckoutForm(forms.Form):
     )
     region = forms.CharField(max_length=80, required=True, label="Область")
     city = forms.CharField(max_length=80, required=True, label="Місто")
-    department = forms.CharField(max_length=8, required=True, label="Відділення")
+    department = forms.CharField(max_length=6, required=True, label="Відділення")
 
 
 class BrandFilterForm(forms.Form):

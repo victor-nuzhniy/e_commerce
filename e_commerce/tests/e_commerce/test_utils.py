@@ -46,6 +46,7 @@ from shop.utils import (
     get_message_and_warning,
     get_checkout_form,
     get_response_dict_with_sale_creation,
+    get_updated_response_dict,
 )
 from shop.forms import CheckoutForm, CustomUserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -1236,14 +1237,14 @@ from tests.e_commerce.factories import (
 #         expected_result = get_checkout_form(user)
 #         assert isinstance(expected_result, CheckoutForm)
 #         assert expected_result.initial == {}
-
+#
 
 @pytest.mark.django_db
 class TestGetResponseDictWithSaleCreation:
     pytestmark = pytest.mark.django_db
 
     def test_get_response_dict_with_sale_creation(self, faker: Faker) -> None:
-        order: Order = OrderFactory()
+        order: Order = OrderFactory(complete=False)
         orderitems: List[OrderItem] = OrderItemFactory.create_batch(
             size=5, order=order
         )
@@ -1269,9 +1270,14 @@ class TestGetResponseDictWithSaleCreation:
                 )
             )
         income_id_set = {income.id for income in incomes}
-        form = get_checkout_form(order.buyer.user)
-        print(form.is_valid())
-        print(form.cleaned_data)
+        initial = define_buyer_data(order_list=None, user=order.buyer.user)
+        initial.update({
+            'order': order.id,
+            'region': faker.pystr(min_chars=2, max_chars=80),
+            'city': faker.pystr(min_chars=2, max_chars=80),
+            'department': faker.pystr(min_chars=1, max_chars=6)
+        })
+        form = CheckoutForm(initial=initial)
         expected_result = get_response_dict_with_sale_creation(
             form, order.buyer.user, items
         )
@@ -1286,3 +1292,96 @@ class TestGetResponseDictWithSaleCreation:
         assert expected_result.get('cartJson') == json.dumps({})
         assert expected_sale
         assert not expected_stock
+
+    def test_get_response_dict_with_sale_creation_anon_user(
+            self, faker: Faker
+    ) -> None:
+        incomes: List[Income] = IncomeFactory.create_batch(size=5)
+        items = []
+        for income in incomes:
+            items.append(NestedNamespace({
+                "product": {
+                    "id": income.product.id,
+                    "name": income.product.name,
+                    "price": income.product.price,
+                    "productimage": {"image": None},
+                },
+                "quantity": income.income_quantity,
+                "get_total": income.income_quantity * income.product.price,
+            }))
+        initial = {
+            'name': faker.user_name(),
+            'email': faker.email(),
+            'tel': faker.pystr(min_chars=12, max_chars=15),
+            'address': faker.pystr(min_chars=12, max_chars=30),
+            'region': faker.pystr(min_chars=2, max_chars=80),
+            'city': faker.pystr(min_chars=2, max_chars=80),
+            'department': faker.pystr(min_chars=1, max_chars=6),
+        }
+        form = CheckoutForm(initial=initial)
+        expected_result = get_response_dict_with_sale_creation(
+            form, AnonymousUser(), items
+        )
+        expected_sale = Sale.objects.last()
+        expected_buyer = Buyer.objects.last()
+        assert expected_result.get('items') == []
+        assert expected_result.get('order') == {
+            "get_order_total": 0, "get_order_items": 0
+        }
+        assert expected_result.get('message') == 'Оплата пройшла успішно'
+        assert expected_result.get('warning') == ':)'
+        assert expected_result.get('cartJson') == json.dumps({})
+        assert expected_sale
+        assert not Stock.objects.all()
+        assert expected_buyer.name == initial.get('name')
+        assert expected_buyer.email == initial.get('email')
+        assert expected_buyer.address == initial.get('address')
+        assert expected_buyer.tel == initial.get('tel')
+        assert expected_sale.region == initial.get('region')
+        assert expected_sale.city == initial.get('city')
+        assert expected_sale.department == initial.get('department')
+
+
+@pytest.mark.django_db
+class TestGetUpdatedResponseDict:
+    pytestmark = pytest.mark.django_db
+
+    def test_get_updated_response_dict(self, faker: Faker) -> None:
+        incomes: List[Income] = IncomeFactory.create_batch(size=5)
+        items = []
+        for income in incomes:
+            items.append(NestedNamespace({
+                "product": {
+                    "id": income.product.id,
+                    "name": income.product.name,
+                    "price": income.product.price,
+                    "productimage": {"image": None},
+                },
+                "quantity": income.income_quantity,
+                "get_total": income.income_quantity * income.product.price,
+            }))
+        initial = {
+            'name': faker.user_name(),
+            'email': faker.email(),
+            'tel': faker.pystr(min_chars=12, max_chars=15),
+            'address': faker.pystr(min_chars=12, max_chars=30),
+            'region': faker.pystr(min_chars=2, max_chars=80),
+            'city': faker.pystr(min_chars=2, max_chars=80),
+            'department': faker.pystr(min_chars=1, max_chars=6),
+        }
+        context, message = dict(), 'Hello'
+        args = QueryDict('', mutable=True)
+        args.update(initial)
+        cart, order = correct_cart_order(items)
+        expected_result = get_updated_response_dict(
+            context, message, items, CheckoutForm(args)
+        )
+        form = expected_result.get('checkout_form')
+        expected_form_data = {key: form[key].value() for key in form.fields.keys()}
+        assert isinstance(expected_result.get('checkout_form'), CheckoutForm)
+        assert expected_result.get('message') == message
+        assert expected_result.get('cartJson') == json.dumps(cart)
+        assert expected_result.get('order') == order
+        for key, value in initial.items():
+            assert expected_form_data[key] == value
+
