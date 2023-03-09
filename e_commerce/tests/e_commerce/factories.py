@@ -48,7 +48,7 @@ class CategoryFactory(BaseModelFactory):
     slug = factory.LazyAttribute(function=lambda obj: slugify(str(obj.name)))
     super_category = factory.SubFactory(factory=SuperCategoryFactory)
     icon = factory.django.ImageField(color="yellow")
-    category_feature_set = factory.RelatedFactoryList(
+    categoryfeatures_set = factory.RelatedFactoryList(
         factory="tests.e_commerce.factories.CategoryFeatureFactory",
         factory_related_name="category_feature_set",
         size=0,

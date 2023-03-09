@@ -67,13 +67,13 @@ def find_instance(
 
 @pytest.fixture(scope="function")
 def products_preparation_for_view_testing(faker: Faker) -> None:
-    super_categories: List[SuperCategory] = SuperCategoryFactory.create_batch()
+    super_categories: List[SuperCategory] = SuperCategoryFactory.create_batch(size=2)
     categories = [
         CategoryFactory(super_category=super_categories[0]) for _ in range(5)
     ] + [
-        CategoryFactory(super_category=super_categories[1] for _ in range(5))
+        CategoryFactory(super_category=super_categories[1]) for _ in range(5)
     ]
-    brands: List[Brand] = BrandFactory.create_batch(size=5)
+    brands: List[Brand] = BrandFactory.create_batch(size=2)
     users: List[User] = UserFactory.create_batch(size=5)
     buyers = [BuyerFactory(user=user) for user in users]
     suppliers: List[Supplier] = SupplierFactory.create_batch(size=2)
@@ -82,12 +82,15 @@ def products_preparation_for_view_testing(faker: Faker) -> None:
     for category in categories:
         for i, brand in enumerate(brands):
             products += ProductFactory.create_batch(
-                size=2, category=category, brand=brand, supplier=suppliers[i]
+                size=2,
+                category=category,
+                brand=brand,
+                sold=False,
             )
     for product in products:
-        for category_feature in product.category.category_featury_set:
+        for category_feature in product.category.categoryfeatures_set.all():
             ProductFeatureFactory(
-                product=product, category_feature=category_feature
+                product=product, feature_name=category_feature
             )
         ProductImageFactory.create_batch(size=3, product=product)
         reviews = ReviewFactory.create_batch(
@@ -106,7 +109,7 @@ def products_preparation_for_view_testing(faker: Faker) -> None:
             product=product,
             income=income,
             supplier=income.supplier,
-            quantity=income.quantity,
+            quantity=5,
         )
         order = OrderFactory(buyer=buyers[faker.random_int(min=0, max=4)], complete=True)
         OrderItemFactory(product=product, order=order, quantity=5)
