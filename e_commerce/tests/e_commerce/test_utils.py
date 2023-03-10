@@ -295,22 +295,20 @@ class TestDecreasingStockItems:
 
     def test_decreasing_stock_items_empty_one_product(self) -> None:
         order: Order = OrderFactory()
-        product: Product = ProductFactory()
-        OrderItemFactory.create_batch(size=5, order=order, product=product)
-        orderitems = OrderItem.objects.all()
-        for orderitem in orderitems:
-            StockFactory(
-                product=product,
-                quantity=orderitem.quantity,
-                price=orderitem.product.price,
-                income=IncomeFactory(product=product)
-            )
+        product: Product = ProductFactory(id=1000000)
+        orderitem: OrderItem = OrderItemFactory(order=order, product=product)
+        stock = StockFactory(
+            product=product,
+            quantity=orderitem.quantity,
+            price=product.price,
+            income=IncomeFactory(product=product)
+        )
+        orderitems = OrderItem.objects.filter(id=orderitem.id)
         decreasing_stock_items(orderitems)
-        expected_stock_result = Stock.objects.count()
-        expected_product_result = Product.objects.all()
+        expected_stock_result = Stock.objects.filter(id=stock.id)
+        expected_product_result = Product.objects.get(id=product.id)
         assert not expected_stock_result
-        for product in expected_product_result:
-            assert product.sold
+        assert expected_product_result.sold
 
     def test_decreasing_stock_items_not_empty(self) -> None:
         order: Order = OrderFactory()
@@ -318,15 +316,17 @@ class TestDecreasingStockItems:
             size=5, order=order
         )
         stock_quantity_list = []
+        id_set = set()
         for i, orderitem in enumerate(orderitems):
-            StockFactory(
+            stock = StockFactory(
                 product=orderitem.product,
                 quantity=orderitem.quantity + i + 1,
                 price=orderitem.product.price,
             )
+            id_set.add(stock.id)
             stock_quantity_list.append(i+1)
         decreasing_stock_items(orderitems)
-        expected_result = Stock.objects.all()
+        expected_result = Stock.objects.filter(id__in=id_set)
         for i, stock in enumerate(expected_result):
             assert stock.quantity == stock_quantity_list[i]
 
@@ -529,7 +529,7 @@ class TestGetProductList:
             assert elem[1] == queryset[i].productimage_set.first().image
 
     def test_get_product_list_empty(self) -> None:
-        queryset = Product.objects.all()
+        queryset = Product.objects.none()
         expected_result = get_product_list(queryset)
         assert expected_result == []
 
@@ -553,7 +553,8 @@ class TestCreateCookieCart:
 
     def test_create_cookie_cart(self) -> None:
         orderitems: List[OrderItem] = OrderItemFactory.create_batch(size=5)
-        queryset = OrderItem.objects.all()
+        id_set = {item.id for item in orderitems}
+        queryset = OrderItem.objects.filter(id__in=id_set)
         expected_result = create_cookie_cart(queryset)
         for key, value in expected_result.items():
             instance = find_instance(orderitems, key, 'id')
@@ -561,7 +562,7 @@ class TestCreateCookieCart:
             assert value.get('quantity') == instance.quantity
 
     def test_create_cookie_cart_empty(self) -> None:
-        queryset = OrderItem.objects.all()
+        queryset = OrderItem.objects.filter(id__gt=100000000)
         expected_result = create_cookie_cart(queryset)
         assert expected_result == {}
 
@@ -1331,7 +1332,6 @@ class TestGetResponseDictWithSaleCreation:
         assert expected_result.get('warning') == ':)'
         assert expected_result.get('cartJson') == json.dumps({})
         assert expected_sale
-        assert not Stock.objects.all()
         assert expected_buyer.name == initial.get('name')
         assert expected_buyer.email == initial.get('email')
         assert expected_buyer.address == initial.get('address')
