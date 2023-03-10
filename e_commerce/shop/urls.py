@@ -1,15 +1,44 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path
 
-from .views import *
+from .views import (
+    HomeView,
+    RegisterUserView,
+    ModLoginView,
+    AdminLoginView,
+    ModPasswordChangeView,
+    ModPasswordResetView,
+    ModPasswordResetDoneView,
+    ModPasswordResetConfirmView,
+    ModPasswordResetCompleteView,
+    UserAccountView,
+    CategoryView,
+    ProductView,
+    ReviewFormView,
+    updateLike,
+    SuperCategoryView,
+    SearchResultView,
+    AboutView,
+    TermsView,
+    ContactView,
+    HelpView,
+    DeliveryView,
+    CreditView,
+    ReturnProductsView,
+    ServiceCentersView,
+    ForPartnersView,
+    updateItem,
+    CartView,
+    CheckoutView,
+)
 
 app_name = "shop"
 
 urlpatterns = [
-    path("", ShopHome.as_view(), name="home"),
+    path("", HomeView.as_view(), name="home"),
     path(
         "accounts/register/",
-        RegisterUser.as_view(template_name="shop/register/register.html"),
+        RegisterUserView.as_view(template_name="shop/register/register.html"),
         name="registration",
     ),
     path("accounts/login/", ModLoginView.as_view(), name="login"),
@@ -39,7 +68,7 @@ urlpatterns = [
         ModPasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
-    path("accounts/<int:pk>", UserAccount.as_view(), name="user_account"),
+    path("accounts/<int:pk>", UserAccountView.as_view(), name="user_account"),
     path("category/<slug:category_slug>/", CategoryView.as_view(), name="category"),
     path(
         "super_category/<int:super_category_pk>/",

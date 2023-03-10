@@ -74,7 +74,7 @@ def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Page not found</h1>")
 
 
-class ShopHome(DataMixin, ListView):
+class HomeView(DataMixin, ListView):
     paginate_by = 20
     template_name = "a_shop/home.html"
     context_object_name = "products"
@@ -103,7 +103,7 @@ class ShopHome(DataMixin, ListView):
         return context
 
 
-class RegisterUser(DataMixin, CreateView):
+class RegisterUserView(DataMixin, CreateView):
     form_class = CustomUserCreationForm
     template_name = "registration/register.html"
     extra_context = {"title": "Реєстрація"}
@@ -212,7 +212,7 @@ class ModPasswordResetCompleteView(DataMixin, PasswordResetCompleteView):
         return context
 
 
-class UserAccount(DataMixin, UserPassesTestMixin, FormView, ABC):
+class UserAccountView(DataMixin, UserPassesTestMixin, FormView, ABC):
     form_class = BuyerAccountForm
     template_name = "a_shop/account.html"
     success_url = reverse_lazy("shop:home")

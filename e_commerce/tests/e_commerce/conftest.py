@@ -3,6 +3,10 @@ from decimal import Decimal
 from faker import Faker
 from django.contrib.auth.models import User
 import pytest
+from shop.querysets import querysets
+from shop.forms import CheckoutForm, CustomUserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.http import HttpResponse
 from shop.models import (
     Category,
     Brand,
@@ -63,3 +67,16 @@ def find_instance(
     for elem in elements:
         if getattr(elem.product, attr) == value:
             return elem
+
+
+def check_data_mixin(response: HttpResponse) -> None:
+    super_categories = querysets.get_super_category_queryset_for_data_mixin()
+    category_list = querysets.get_category_queryset_for_data_mixin().order_by('id')
+    for i, category in enumerate(response.context['category_list']):
+        assert category == category_list[i]
+    for i, super_category in enumerate(response.context['super_categories']):
+        assert super_category == super_categories[i]
+    assert isinstance(response.context['user_creation_form'], CustomUserCreationForm)
+    assert isinstance(response.context['user_login_form'], AuthenticationForm)
+    assert response.context['cartItem'] == 0
+
