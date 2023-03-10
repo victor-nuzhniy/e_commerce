@@ -2,6 +2,8 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 import json
+from django.contrib import admin
+from faker import Faker
 from shop.models import (
     Brand,
     Buyer,
@@ -84,51 +86,129 @@ from tests.e_commerce.factories import (
 from shop.forms import CheckoutForm, CustomUserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.cache import cache
+from django.contrib.auth.models import User
 
+#
+# @pytest.mark.django_db
+# class TestHomeView:
+#     pytestmark = pytest.mark.django_db
+#
+#     def test_home_view(
+#             self, client: Client
+#     ) -> None:
+#         cache.clear()
+#         url = reverse('shop:home')
+#         products = get_product_list(
+#             querysets.get_product_queryset_for_shop_home_view()
+#         )
+#         response = client.get(url)
+#         check_data_mixin(response)
+#         assert response.status_code == 200
+#         assert len(response.context['products']) == 20
+#         for i, product in enumerate(response.context['products']):
+#             assert product == products[i]
+#         assert response.context['super_category_flag'] is True
+#         assert response.context['cartJson'] == json.dumps({})
+#         assert not response.context['flag']
+#         assert response.context['page_data'] == PageData.objects.filter(name='home').first()
+#
+#     def test_home_view_next_page(
+#             self, client: Client
+#     ) -> None:
+#         cache.clear()
+#         url = reverse('shop:home')
+#         products = get_product_list(
+#             querysets.get_product_queryset_for_shop_home_view()
+#         )
+#         response = client.get(url, {'page': 2})
+#         check_data_mixin(response)
+#         assert response.status_code == 200
+#         assert len(response.context['products']) == 20
+#         for i, product in enumerate(response.context['products']):
+#             assert product == products[i+20]
+#         assert response.context['super_category_flag'] is True
+#         assert response.context['cartJson'] == json.dumps({})
+#         assert not response.context['flag']
+#         assert response.context['page_data'] == PageData.objects.filter(name='home').first()
+#
+#
+# @pytest.mark.django_db
+# class TestRegisterUserView:
+#     pytestmark = pytest.mark.django_db
+#
+#     def test_register_user_view_get(self, client: Client) -> None:
+#         cache.clear()
+#         url = reverse('shop:registration')
+#         response = client.get(url)
+#         check_data_mixin(response)
+#         assert response.status_code == 200
+#         assert isinstance(response.context['form'], CustomUserCreationForm)
+#         assert response.context['title'] == 'Реєстрація'
+#
+#     def test_register_user_view_post(self, client: Client, faker: Faker) -> None:
+#         cache.clear()
+#         url = reverse('shop:registration')
+#         password = faker.pystr(min_chars=15, max_chars=20)
+#         form_data = {
+#             'username': faker.user_name(),
+#             'password1': password,
+#             'password2': password,
+#         }
+#         response = client.post(url, form_data)
+#         assert response.status_code == 302
+#         assert response.url == reverse('shop:home')
+#
 
 @pytest.mark.django_db
-class TestHomeView:
+class TestModLoginView:
     pytestmark = pytest.mark.django_db
 
-    def test_home_view(
-            self, client: Client
-    ) -> None:
+    def test_mod_login_view_get(self, client: Client, faker: Faker) -> None:
         cache.clear()
-        url = reverse('shop:home')
-        products = get_product_list(
-            querysets.get_product_queryset_for_shop_home_view()
-        )
+        url = reverse('shop:login')
         response = client.get(url)
         check_data_mixin(response)
         assert response.status_code == 200
-        assert len(response.context['products']) == 20
-        for i, product in enumerate(response.context['products']):
-            assert product == products[i]
-        assert response.context['super_category_flag'] is True
-        assert response.context['cartJson'] == json.dumps({})
-        assert not response.context['flag']
-        assert response.context['page_data'] == PageData.objects.filter(name='home').first()
+        assert isinstance(response.context['form'], AuthenticationForm)
+        assert response.context['title'] == 'Авторизація'
 
-    def test_home_view_next_page(
-            self, client: Client
-    ) -> None:
-        cache.clear()
-        url = reverse('shop:home')
-        products = get_product_list(
-            querysets.get_product_queryset_for_shop_home_view()
+    def test_mod_login_view_post(self, client: Client, faker: Faker) -> None:
+        url = reverse('shop:login')
+        password = faker.pystr(min_chars=15, max_chars=20)
+        user = User.objects.create_user(
+            faker.user_name(),
+            faker.email(),
+            password
         )
-        response = client.get(url, {'page': 2})
+        form_data = {'username': user.username, 'password': password}
+        response = client.post(url, form_data)
+        assert response.status_code == 302
+        assert response.url == reverse('shop:home')
+
+
+@pytest.mark.django_db
+class TestAdminLoginView:
+    pytestmark = pytest.mark.django_db
+
+    def test_admin_login_view_get(self, client: Client, faker: Faker) -> None:
+        cache.clear()
+        url = reverse('login')
+        response = client.get(url)
         check_data_mixin(response)
         assert response.status_code == 200
-        assert len(response.context['products']) == 20
-        for i, product in enumerate(response.context['products']):
-            assert product == products[i+20]
-        assert response.context['super_category_flag'] is True
-        assert response.context['cartJson'] == json.dumps({})
-        assert not response.context['flag']
-        assert response.context['page_data'] == PageData.objects.filter(name='home').first()
+        assert isinstance(response.context['form'], AuthenticationForm)
 
-
-# @pytest.mark.django_db
-# class TestRegisterUser:
-#     pytestmark = pytest.django_db
+    def test_admin_login_view_post(self, client: Client, faker: Faker) -> None:
+        url = reverse('login')
+        password = faker.pystr(min_chars=15, max_chars=20)
+        user = User.objects.create_user(
+            faker.user_name(),
+            faker.email(),
+            password
+        )
+        # user.is_staff = True
+        # user.save()
+        form_data = {'username': user.username, 'password': password}
+        response = client.post(url, form_data)
+        assert response.status_code == 302
+        assert response.url == '/admin'

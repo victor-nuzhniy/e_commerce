@@ -38,7 +38,7 @@ urlpatterns = [
     path("", HomeView.as_view(), name="home"),
     path(
         "accounts/register/",
-        RegisterUserView.as_view(template_name="shop/register/register.html"),
+        RegisterUserView.as_view(template_name="a_shop/register/register.html"),
         name="registration",
     ),
     path("accounts/login/", ModLoginView.as_view(), name="login"),

@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import admin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import (
@@ -110,7 +111,7 @@ class RegisterUserView(DataMixin, CreateView):
 
     def form_valid(self, form: CustomUserCreationForm) -> HttpResponseRedirect:
         user = form.save()
-        buyer = Buyer.objects.create(user=user, name=user.username, email=user.email)
+        Buyer.objects.create(user=user, name=user.username, email=user.email)
         login(self.request, user)
         response = HttpResponseRedirect(reverse("shop:home"))
         return cart_authorization_handler(self.request, response, user)
@@ -144,10 +145,12 @@ class AdminLoginView(DataMixin, LoginView):
 
     def form_valid(self, form: AuthenticationForm) -> HttpResponseRedirect:
         user = form.get_user()
+        if not user.is_staff:
+            return self.render_to_response(self.get_context_data(form=form))
         response = super().form_valid(form)
         buyer = check_buyer_existence(user)
         clear_not_completed_order(buyer)
-        cart = json.loads(self.request.COOKIES.get("cart"))
+        cart = self.request.COOKIES.get('cart')
         if cart:
             response.delete_cookie("cart")
         return response
