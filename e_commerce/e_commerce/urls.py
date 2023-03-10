@@ -16,12 +16,13 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from shop.views import page_not_found
+from shop.views import page_not_found, AdminLoginView
 
 from e_commerce import settings
 
 urlpatterns = [
     path("grappelli/", include("grappelli.urls")),
+    path('admin/login/', AdminLoginView.as_view(), name='login'),
     path("admin/", admin.site.urls),
     path("", include("shop.urls")),
 ]

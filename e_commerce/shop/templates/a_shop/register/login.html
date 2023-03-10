@@ -1,11 +1,10 @@
-{% extends 'shop/base.html' %}
-{% load i18n %}
+{% extends 'a_shop/base.html' %}
 
-{% block title %}{% translate "Авторизация" %}{% endblock %}
+{% block title %}Авторизація{% endblock %}
 
 {% block content %}
 <div class="menu-down-content-items" style="margin:80px">
-    <h2>{% translate 'Вход в панель администратора' %}</h2>
+    <h2>Вхід в панель адміністратора</h2>
     <form method="post" class="admin-login">
         {% csrf_token %}
         {{ form.as_p }}
