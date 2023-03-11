@@ -162,7 +162,7 @@ class AdminLoginView(DataMixin, LoginView):
 
 
 class ModPasswordChangeView(DataMixin, PasswordChangeView):
-    success_url = "shop:home"
+    success_url = reverse_lazy("shop:home")
     template_name = "a_shop/register/password_change_form.html"
     extra_context = {"title": "Зміна паролю"}
 

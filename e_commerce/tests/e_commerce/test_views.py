@@ -1,9 +1,12 @@
 import pytest
 from django.test import Client
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 import json
 from django.contrib import admin
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from faker import Faker
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from shop.models import (
     Brand,
     Buyer,
@@ -84,7 +87,9 @@ from tests.e_commerce.factories import (
     UserFactory,
 )
 from shop.forms import CheckoutForm, CustomUserCreationForm
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
+)
 from django.core.cache import cache
 from django.contrib.auth.models import User
 
@@ -206,9 +211,89 @@ class TestAdminLoginView:
             faker.email(),
             password
         )
-        # user.is_staff = True
-        # user.save()
+        user.is_staff = True
+        user.save()
         form_data = {'username': user.username, 'password': password}
         response = client.post(url, form_data)
         assert response.status_code == 302
         assert response.url == '/admin'
+
+
+@pytest.mark.django_db
+class TestModPasswordChangeView:
+    pytestmark = pytest.mark.django_db
+
+    def test_mod_password_change_view_get(self, client: Client, faker: Faker) -> None:
+        url = reverse('shop:registration')
+        password = faker.pystr(min_chars=15, max_chars=20)
+        username = faker.user_name()
+        form_data = {
+            'username': username, 'password1': password, 'password2': password
+        }
+        client.post(url, form_data)
+        client.login(username=username, password=password)
+        url = reverse('shop:password_change')
+        response = client.get(url)
+        check_data_mixin(response)
+        assert response.status_code == 200
+        assert isinstance(response.context['form'], PasswordChangeForm)
+        assert response.context['title'] == 'Зміна паролю'
+
+
+@pytest.mark.django_db
+class TestModPasswordResetFormView:
+    pytestmark = pytest.mark.django_db
+
+    def test_mod_password_reset_form_view_get(self, client: Client) -> None:
+        url = reverse('shop:password_reset')
+        response = client.get(url)
+        check_data_mixin(response)
+        assert response.status_code == 200
+        assert isinstance(response.context['form'], PasswordResetForm)
+        assert response.context['title'] == 'Скидання паролю'
+
+    def test_mod_password_reset_form_view_post(
+            self, client: Client, faker: Faker
+    ):
+        user = User.objects.create_user(
+            faker.user_name(), faker.email(), faker.pystr(min_chars=15, max_chars=20)
+        )
+        url = reverse('shop:password_reset')
+        form_data = {'email': user.email}
+        response = client.post(url, form_data)
+        assert response.status_code == 302
+        assert response.url == reverse('shop:password_reset_done')
+
+
+@pytest.mark.django_db
+class TestModPasswordResetDoneView:
+    pytestmark = pytest.mark.django_db
+
+    def test_mod_password_reset_done_view(self, client: Client) -> None:
+        url = reverse('shop:password_reset_done')
+        response = client.get(url)
+        check_data_mixin(response)
+        assert response.status_code == 200
+        assert response.context['title'] == 'Пароль скинутий'
+
+
+@pytest.mark.django_db
+class TestModPasswordResetConfirmView:
+    pytestmark = pytest.mark.django_db
+
+    def test_mod_password_reset_confirm_view_get(
+            self, client: Client, faker: Faker
+    ) -> None:
+        user = User.objects.create_user(
+            faker.user_name(), faker.email(), faker.pystr(min_chars=15, max_chars=20)
+        )
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(user)
+        url = reverse(
+            'shop:password_reset_confirm',
+            kwargs={'uidb64': uid, 'token': token}
+        )
+        response = client.get(url)
+        assert response.status_code == 302
+        assert response.url == f'/accounts/reset/{uid}/set-password/'
