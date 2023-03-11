@@ -297,3 +297,12 @@ class TestModPasswordResetConfirmView:
         response = client.get(url)
         assert response.status_code == 302
         assert response.url == f'/accounts/reset/{uid}/set-password/'
+        url = reverse(
+            'shop:password_reset_confirm',
+            kwargs={'uidb64': uid, 'token': 'set-password'}
+        )
+        response = client.get(url)
+        check_data_mixin(response)
+        assert response.status_code == 200
+        assert isinstance(response.context['form'], SetPasswordForm)
+        assert response.context['title'] == 'Підтвердження скидання паролю'
