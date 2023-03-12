@@ -4,6 +4,7 @@ from typing import Tuple, List, Union
 from decimal import Decimal
 from django.core.management import call_command
 from faker import Faker
+from django.contrib.auth.models import User
 
 from shop.models import (
     Category,
@@ -48,7 +49,8 @@ def products_preparation_for_view_testing(faker: Faker) -> None:
     data for test database. To invoke this fixture you have to set scope='function',
     autouse=True as fixture decorator argument and once run test with one test function.
     The 'data.json' file will be created in tests folder. It may be need to
-    convert 'data.json' code to 'utf-8', use 'NotePad' for that.
+    convert 'data.json' code to 'utf-8', use 'NotePad' for that. There is a
+    need to comment custom django_db_setup fixture below.
     """
     super_categories: List[SuperCategory] = SuperCategoryFactory.create_batch(size=2)
     categories = [
@@ -57,7 +59,13 @@ def products_preparation_for_view_testing(faker: Faker) -> None:
         CategoryFactory(super_category=super_categories[1]) for _ in range(5)
     ]
     brands: List[Brand] = BrandFactory.create_batch(size=2)
-    users: List[User] = UserFactory.create_batch(size=5)
+    users = [
+        User.objects.create_user(
+            username=f'username_{i+1}',
+            email=f'username_{i+1}@user.com',
+            password='fyukbqcrbq zpsr11'
+        ) for i in range(5)
+    ]
     buyers = [BuyerFactory(user=user) for user in users]
     suppliers: List[Supplier] = SupplierFactory.create_batch(size=2)
     [CategoryFeatureFactory.create_batch(size=3, category=category) for category in categories]

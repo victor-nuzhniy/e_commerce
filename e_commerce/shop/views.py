@@ -259,7 +259,7 @@ class CategoryView(DataMixin, ListView):
         data_context = self.get_user_context()
         categories, slug = data_context["category_list"], self.kwargs["category_slug"]
         page_data = PageData.objects.filter(name="category").first()
-        category_list = define_category_list(slug, data_context["category_list"])
+        category_list = define_category_list(slug, categories)
         products = querysets.get_product_queryset_for_category_view(slug)
         brands = define_brand_list(products)
 
@@ -307,7 +307,7 @@ class ProductView(DataMixin, DetailView):
     def get_context_data(self, **kwargs: Any) -> Dict:
         context = super().get_context_data(**kwargs)
         product = context["product"]
-        product.last_accessed = datetime.datetime.now(tz=timezone.utc)
+        product.last_access_at = datetime.datetime.now(tz=timezone.utc)
         product.access_number = F("access_number") + 1
         product.save()
         title = product.name
