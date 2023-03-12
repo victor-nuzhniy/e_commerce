@@ -69,7 +69,7 @@ def find_instance(
             return elem
 
 
-def check_data_mixin(response: HttpResponse) -> None:
+def check_data_mixin_without_cart(response: HttpResponse) -> None:
     super_categories = querysets.get_super_category_queryset_for_data_mixin()
     category_list = querysets.get_category_queryset_for_data_mixin().order_by('id')
     for i, category in enumerate(response.context['category_list']):
@@ -78,5 +78,9 @@ def check_data_mixin(response: HttpResponse) -> None:
         assert super_category == super_categories[i]
     assert isinstance(response.context['user_creation_form'], CustomUserCreationForm)
     assert isinstance(response.context['user_login_form'], AuthenticationForm)
+
+
+def check_data_mixin(response: HttpResponse) -> None:
+    check_data_mixin_without_cart(response)
     assert response.context['cartItem'] == 0
 

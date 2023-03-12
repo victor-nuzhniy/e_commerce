@@ -65,7 +65,7 @@ from shop.utils import (
     get_updated_response_dict,
 )
 from shop.querysets import querysets
-from tests.e_commerce.conftest import check_data_mixin
+from tests.e_commerce.conftest import check_data_mixin, check_data_mixin_without_cart
 from tests.e_commerce.factories import (
     BrandFactory,
     BuyerFactory,
@@ -198,13 +198,20 @@ class TestAdminLoginView:
     def test_admin_login_view_get(self, client: Client, faker: Faker) -> None:
         cache.clear()
         url = reverse('login')
+        quantity = faker.pyint(min_value=1, max_value=10000)
+        cart = json.dumps({1: {'quantity': quantity}})
+        client.cookies.load({'cart': cart})
         response = client.get(url)
-        check_data_mixin(response)
+        check_data_mixin_without_cart(response)
+        assert response.context['cartItem'] == quantity
         assert response.status_code == 200
         assert isinstance(response.context['form'], AuthenticationForm)
 
     def test_admin_login_view_post(self, client: Client, faker: Faker) -> None:
         url = reverse('login')
+        quantity = faker.pyint(min_value=1, max_value=10000)
+        cart = json.dumps({1: {'quantity': quantity}})
+        client.cookies.load({'cart': cart})
         password = faker.pystr(min_chars=15, max_chars=20)
         user = User.objects.create_user(
             faker.user_name(),
@@ -306,3 +313,43 @@ class TestModPasswordResetConfirmView:
         assert response.status_code == 200
         assert isinstance(response.context['form'], SetPasswordForm)
         assert response.context['title'] == 'Підтвердження скидання паролю'
+
+    def test_mod_password_reset_confirm_view_post(
+            self, client: Client, faker: Faker
+    ) -> None:
+        user = User.objects.create_user(
+            faker.user_name(), faker.email(), faker.pystr(min_chars=15, max_chars=20)
+        )
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(user)
+        url = reverse(
+            'shop:password_reset_confirm',
+            kwargs={'uidb64': uid, 'token': token}
+        )
+        response = client.get(url)
+        assert response.status_code == 302
+        assert response.url == f'/accounts/reset/{uid}/set-password/'
+        url = reverse(
+            'shop:password_reset_confirm',
+            kwargs={'uidb64': uid, 'token': 'set-password'}
+        )
+        new_password = faker.pystr(min_chars=15, max_chars=20)
+        post_data = {'new_password1': new_password, 'new_password2': new_password}
+        response = client.post(url, post_data)
+        assert response.status_code == 302
+        assert response.url == reverse('shop:password_reset_complete')
+
+
+@pytest.mark.django_db
+class TestModPasswordResetCompleteView:
+    pytestmark = pytest.mark.django_db
+
+    def test_mod_password_reset_complete_view(self, client: Client) -> None:
+        url = reverse('shop:password_reset_complete')
+        response = client.get(url)
+        check_data_mixin(response)
+        assert response.status_code == 200
+        assert response.context['title'] == 'Скидання паролю виконано'
+
+
